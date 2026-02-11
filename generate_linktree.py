@@ -12,18 +12,40 @@ AMAZON_ASSOCIATE_TAG = "107704-22"
 
 # --- おすすめアイテムキーワード ---
 ITEMS = [
+    # --- TOPS ---
     {"name": "Oversized Hoodie / オーバーサイズパーカー", "keywords": "オーバーサイズ パーカー メンズ 韓国"},
     {"name": "Deconstructed Blazer / デコンストラクトブレザー", "keywords": "モード ブレザー メンズ オーバーサイズ"},
-    {"name": "Leather Trench / レザートレンチコート", "keywords": "レザー トレンチコート メンズ"},
+    {"name": "Varsity Jacket / バーシティジャケット", "keywords": "スタジャン バーシティ メンズ レザー"},
+    {"name": "Cable Knit Cardigan / ケーブルニットカーディガン", "keywords": "ケーブルニット カーディガン メンズ"},
+    {"name": "Rugby Polo / ラグビーポロ", "keywords": "ラグビーシャツ メンズ ストライプ"},
+    # --- BOTTOMS ---
     {"name": "Wide-Leg Denim / ワイドデニム", "keywords": "ワイドパンツ デニム メンズ"},
     {"name": "Technical Cargo / テクニカルカーゴ", "keywords": "テックウェア カーゴパンツ メンズ"},
+    {"name": "Pleated Trousers / プリーツトラウザー", "keywords": "プリーツパンツ ワイド メンズ"},
+    {"name": "Linen Pants / リネンパンツ", "keywords": "リネン ワイドパンツ メンズ"},
+    {"name": "Pinstripe Trousers / ピンストライプ", "keywords": "ピンストライプ スラックス メンズ"},
+    # --- SHOES ---
     {"name": "Platform Sneakers / 厚底スニーカー", "keywords": "厚底 スニーカー メンズ 韓国"},
     {"name": "Tabi Boots / タビブーツ", "keywords": "足袋ブーツ メンズ"},
+    {"name": "Chelsea Boots / チェルシーブーツ", "keywords": "チェルシーブーツ メンズ レザー"},
+    {"name": "Retro Runners / レトロランナー", "keywords": "レトロ スニーカー メンズ スエード"},
+    # --- OUTERWEAR ---
+    {"name": "Leather Trench / レザートレンチコート", "keywords": "レザー トレンチコート メンズ"},
+    {"name": "Puffer Jacket / パファージャケット", "keywords": "パファージャケット メンズ オーバーサイズ"},
+    {"name": "Shearling Aviator / シアリングアビエイター", "keywords": "ムートン アビエイター ジャケット メンズ"},
+    {"name": "Cashmere Overcoat / カシミヤオーバーコート", "keywords": "カシミヤ チェスターコート メンズ"},
+    {"name": "Biker Jacket / バイカージャケット", "keywords": "ライダースジャケット レザー メンズ"},
+    # --- BAGS ---
     {"name": "Woven Leather Bag / 編み込みレザーバッグ", "keywords": "イントレチャート バッグ レザー"},
+    {"name": "Canvas Tote / キャンバストート", "keywords": "キャンバス トートバッグ メンズ 大容量"},
+    {"name": "Belt Bag / ベルトバッグ", "keywords": "ベルトバッグ メンズ ナイロン"},
+    # --- ACCESSORIES ---
     {"name": "Silver Chain / シルバーチェーン", "keywords": "シルバー925 チェーンネックレス メンズ"},
     {"name": "Gothic Cross / ゴシッククロス", "keywords": "ゴシック クロス ペンダント シルバー"},
-    {"name": "Puffer Jacket / パファージャケット", "keywords": "パファージャケット メンズ オーバーサイズ"},
     {"name": "Gold Ring Set / ゴールドリングセット", "keywords": "メンズ リング ゴールド セット"},
+    {"name": "Cashmere Beanie / カシミヤビーニー", "keywords": "カシミヤ ニット帽 メンズ"},
+    {"name": "Aviator Sunglasses / アビエイターサングラス", "keywords": "アビエイター サングラス メンズ ゴールド"},
+    {"name": "Dress Watch / ドレスウォッチ", "keywords": "薄型 腕時計 メンズ ミニマル"},
 ]
 
 
@@ -66,12 +88,17 @@ def generate_html() -> str:
             text-align: center; color: #888;
             font-size: 0.85rem; margin-bottom: 24px;
         }
+        .category-title {
+            font-size: 0.75rem; color: #666;
+            letter-spacing: 3px; text-transform: uppercase;
+            margin: 20px 0 8px; padding-left: 4px;
+        }
         .item {
             background: #1a1a1a; border-radius: 12px;
-            padding: 16px; margin-bottom: 12px;
+            padding: 16px; margin-bottom: 8px;
         }
         .item-name {
-            font-weight: 600; font-size: 0.95rem;
+            font-weight: 600; font-size: 0.9rem;
             margin-bottom: 10px;
         }
         .links { display: flex; gap: 8px; }
@@ -79,7 +106,9 @@ def generate_html() -> str:
             flex: 1; text-align: center; padding: 10px;
             border-radius: 8px; text-decoration: none;
             font-size: 0.85rem; font-weight: 600;
+            transition: opacity 0.2s;
         }
+        .links a:active { opacity: 0.7; }
         .rakuten { background: #bf0000; color: #fff; }
         .amazon { background: #ff9900; color: #000; }
         .footer {
@@ -94,12 +123,25 @@ def generate_html() -> str:
         <p class="subtitle">Tap to find similar items / タップして類似アイテムを探す</p>
 """
 
+    # カテゴリ別にグループ化
+    current_category = None
+    category_labels = {
+        "TOPS": "TOPS / トップス",
+        "BOTTOMS": "BOTTOMS / ボトムス",
+        "SHOES": "SHOES / シューズ",
+        "OUTERWEAR": "OUTERWEAR / アウター",
+        "BAGS": "BAGS / バッグ",
+        "ACCESSORIES": "ACCESSORIES / アクセサリー",
+    }
+
     for item in ITEMS:
+        # コメントからカテゴリを判定（nameの前のカテゴリラベル）
+        name = item["name"]
         rakuten_url = generate_rakuten_url(item["keywords"])
         amazon_url = generate_amazon_url(item["keywords"])
         html += f"""
         <div class="item">
-            <div class="item-name">{item["name"]}</div>
+            <div class="item-name">{name}</div>
             <div class="links">
                 <a href="{rakuten_url}" target="_blank" class="rakuten">楽天で探す</a>
                 <a href="{amazon_url}" target="_blank" class="amazon">Amazonで探す</a>

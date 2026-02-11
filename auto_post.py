@@ -6,6 +6,7 @@ Windowsタスクスケジューラから呼び出して使用。
 
 import os
 import sys
+import json
 import random
 import logging
 from datetime import datetime
@@ -23,6 +24,42 @@ from modules.token_manager import auto_refresh
 from modules.ai_image_generator import generate_ai_image
 from modules.uploader import upload_image
 from modules.insta_poster import post_to_instagram
+
+# --- 投稿履歴管理（重複防止） ---
+HISTORY_PATH = os.path.join(os.path.dirname(__file__), "post_history.json")
+
+
+def load_history() -> list[int]:
+    """投稿済みインデックスのリストを読み込む。"""
+    if os.path.exists(HISTORY_PATH):
+        with open(HISTORY_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+
+def save_history(history: list[int]) -> None:
+    """投稿済みインデックスのリストを保存する。"""
+    with open(HISTORY_PATH, "w", encoding="utf-8") as f:
+        json.dump(history, f)
+
+
+def pick_unused_post(posts: list[dict]) -> tuple[int, dict]:
+    """未投稿のアイテムをランダムに選ぶ。全部投稿済みならリセット。"""
+    history = load_history()
+    all_indices = list(range(len(posts)))
+    available = [i for i in all_indices if i not in history]
+
+    if not available:
+        logging.info("全アイテム投稿済み → 履歴リセット")
+        history = []
+        available = all_indices
+
+    idx = random.choice(available)
+    history.append(idx)
+    save_history(history)
+    logging.info(f"選択: #{idx+1}/{len(posts)} (残り{len(available)-1}件)")
+    return idx, posts[idx]
+
 
 # --- 自動投稿用のプロンプト＆キャプション一覧 ---
 # ここに好きなだけ追加してください。ランダムで1つ選ばれます。
@@ -214,8 +251,8 @@ def auto_post():
             logging.error("トークンが無効です。python get_token.py を実行してください。")
             return False
 
-        # Step 1: ランダムにプロンプトを選択
-        post = random.choice(POSTS)
+        # Step 1: 未投稿のアイテムを選択（重複防止）
+        idx, post = pick_unused_post(POSTS)
         prompt = post["prompt"]
         caption = post["caption"]
         logging.info(f"プロンプト: {prompt}")

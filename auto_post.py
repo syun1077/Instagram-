@@ -124,6 +124,79 @@ POSTS = [
         "prompt": "Stunning product photo of a structured bucket hat in premium black nylon with embroidered logo on front panel, metal eyelet vents on sides, adjustable internal drawstring, placed on white pedestal with harsh top-down studio lighting creating dramatic shadow, streetwear accessory campaign, 8K",
         "caption": "Nylon Bucket Hat\nナイロンバケットハット\n\nStructured nylon. Embroidered logo. Metal eyelets.\nメタルアイレットがアクセント。\nThe bucket hat that means business.\n\n#fashion #ファッション #buckethat #nylon #streetwear #バケハ #バケットハット #帽子 #ストリート #hype",
     },
+    # === クセ強め - トップス ===
+    {
+        "prompt": "High-end product photo of a distressed acid wash denim shirt with bleach splatter effect, raw cut hem, oversized boxy fit, mismatched vintage-style buttons in brass and silver, heavy 12oz denim, laid flat on rusted metal surface, harsh overhead lighting creating strong contrast, punk-meets-luxury aesthetic, 8K",
+        "caption": "Acid Wash Bleach Denim Shirt\nアシッドウォッシュ ブリーチデニムシャツ\n\nBleach splatter. Raw hem. Mismatched buttons.\n漂白加工とミスマッチボタンの無骨さ。\nPerfectly imperfect.\n\n#fashion #ファッション #acidwash #denim #distressed #アシッドウォッシュ #デニムシャツ #グランジ #punk #トレンド",
+    },
+    {
+        "prompt": "Luxury product photo of a black oversized half-zip fleece pullover with contrasting neon orange zipper and zipper pull tab, sherpa texture visible, boxy cropped length hitting at waist, embroidered coordinates text on back in white, displayed on industrial chain-link backdrop, harsh flash photography, techwear gorpcore brand aesthetic, 8K",
+        "caption": "Neon Zip Sherpa Pullover\nネオンジップ シェルパプルオーバー\n\nSherpa fleece x neon orange zip. Unexpected combo.\nネオンオレンジのジップがアクセント。\nOutdoor tech, city attitude.\n\n#fashion #ファッション #sherpa #fleece #neonzip #シェルパ #フリース #ゴープコア #techwear #クセ強",
+    },
+    {
+        "prompt": "Premium product photo of a cream oversized rugby polo shirt with bold navy and maroon horizontal stripes across chest, white rubber collar, embroidered crest patch, heavyweight cotton pique fabric, draped over vintage gymnasium pommel horse, warm nostalgic lighting, preppy sport revival aesthetic, 8K",
+        "caption": "Vintage Rugby Polo\nヴィンテージ ラグビーポロ\n\nBold stripes. Rubber collar. Old-school rugby energy.\nラバーカラーにボールドストライプ。\nPreppy with an edge.\n\n#fashion #ファッション #rugby #polo #preppy #ラグビーシャツ #ポロ #ヴィンテージ #スポーツMIX #クセ強",
+    },
+    {
+        "prompt": "Stunning product photo of an oversized black mesh football jersey with glossy vinyl number 99 in chrome silver on front and back, contrast white piping at shoulders, vented mesh side panels, displayed floating against pure black background with single spotlight from above, sports luxe editorial, 8K",
+        "caption": "Chrome 99 Mesh Jersey\nクローム99 メッシュジャージ\n\nVinyl chrome numbers on full mesh. Sports luxe.\n光沢クロームナンバーが主役。\nJersey culture, elevated.\n\n#fashion #ファッション #jersey #mesh #chrome #ジャージ #メッシュ #スポーツ #blokecore #hype",
+    },
+    {
+        "prompt": "High-end product photo of a washed olive military field jacket with hand-painted abstract art splashes in white and red across the back panel, distressed brass snap buttons, multiple flap pockets, faded cotton twill fabric, hung on rusty nail against raw plywood wall, gritty editorial lighting, art-meets-military fashion, 8K",
+        "caption": "Hand-Painted Military Jacket\nハンドペイント ミリタリージャケット\n\nHand-painted art on vintage military cotton.\n一点物のハンドペイントアート。\nWearable art with a military soul.\n\n#fashion #ファッション #military #handpainted #art #ミリタリー #ハンドペイント #一点物 #アート #クセ強",
+    },
+    # === クセ強め - ボトムス ===
+    {
+        "prompt": "Luxury product photo of reconstructed patchwork denim jeans made from multiple different wash shades of denim sewn together in irregular panels, exposed raw seams with orange contrast stitching, wide straight leg fit, laid flat on butcher paper surface, bright overhead studio lighting, avant-garde denim brand aesthetic, 8K",
+        "caption": "Patchwork Reconstructed Denim\nパッチワーク リコンストラクトデニム\n\nMultiple washes. Raw seams. One-of-a-kind panels.\n異なるウォッシュを再構築した唯一無二のデニム。\nDenim, deconstructed.\n\n#fashion #ファッション #patchwork #denim #reconstructed #パッチワーク #デニム #リメイク #アート #unique",
+    },
+    {
+        "prompt": "Premium product photo of black technical jogger pants with detachable cargo pocket pouches connected by carabiner clips, adjustable velcro ankle straps, waterproof ripstop nylon fabric with taped seams visible, multiple d-ring attachment points, styled on metal grid surface with tactical accessories, techwear utility brand campaign, 8K",
+        "caption": "Modular Cargo Joggers\nモジュラーカーゴジョガー\n\nDetachable pouches. Carabiner clips. Full utility.\n着脱式ポーチとカラビナの機能美。\nCustomize your carry.\n\n#fashion #ファッション #techwear #modular #cargo #テックウェア #モジュラー #カーゴ #utility #機能美",
+    },
+    {
+        "prompt": "Stunning product photo of cream corduroy flared pants with exaggerated wide flare from knee, high waist with oversized tortoiseshell belt buckle, thick 8-wale corduroy with visible texture ridges, hung on wooden pants hanger against terracotta wall, warm golden afternoon light, 70s revival fashion trend, 8K",
+        "caption": "Corduroy Mega Flares\nコーデュロイ メガフレア\n\nExaggerated flare. Thick corduroy. 70s reborn.\n膝下から大胆に広がるメガフレア。\nThe 70s are back, and louder.\n\n#fashion #ファッション #corduroy #flare #70s #コーデュロイ #フレアパンツ #レトロ #ヴィンテージ #クセ強",
+    },
+    # === クセ強め - シューズ ===
+    {
+        "prompt": "High-end sneaker product photo of deconstructed chunky trail runners with exposed foam midsole in neon green, translucent mesh upper showing internal structure, mismatched lace colors in orange and purple, aggressive lug outsole, placed on cracked earth surface with dramatic side lighting, experimental sneaker design campaign, 8K",
+        "caption": "Deconstructed Trail Runners\nデコンストラクト トレイルランナー\n\nExposed foam. Translucent mesh. Mismatched laces.\n内部構造が透けるトランスルーセントメッシュ。\nSneakers that break the rules.\n\n#fashion #ファッション #trailrunner #deconstructed #sneakers #トレイル #スニーカー #実験的 #デザイン #hype",
+    },
+    {
+        "prompt": "Premium product photo of glossy black patent leather combat boots with chunky platform sole, silver metal toe cap detail, oversized silver buckle straps wrapping around ankle, yellow contrast welt stitching, placed on wet reflective black surface with water droplets, dramatic moody lighting, punk-luxury boot campaign, 8K",
+        "caption": "Platform Combat Boots\nプラットフォーム コンバットブーツ\n\nPatent leather. Metal toe cap. Buckle straps.\nメタルトゥキャップにバックルストラップ。\nHeavy boots, heavy statement.\n\n#fashion #ファッション #combatboots #platform #patent #コンバットブーツ #厚底 #パンク #boots #クセ強",
+    },
+    {
+        "prompt": "Luxury sneaker photo of retro basketball mid-tops in sail white aged leather with vintage yellowed sole, perforated toe box, ankle strap with metal snap closure, distressed scuff marks intentionally applied, placed on aged newspaper pages, warm vintage film photography aesthetic, archive sneaker revival, 8K",
+        "caption": "Vintage Aged Basketball Mids\nヴィンテージエイジド バスケットミッド\n\nPre-aged leather. Yellowed sole. Worn-in character.\n経年変化を再現したエイジド加工。\nBorn vintage.\n\n#fashion #ファッション #vintage #basketball #aged #ヴィンテージ #バッシュ #エイジド #レトロ #archive",
+    },
+    # === クセ強め - アウター ===
+    {
+        "prompt": "Stunning product photo of an oversized black tactical vest with multiple molle webbing attachment points, padded shoulders, high collar with velcro name tape area, multiple zip and snap cargo pockets in different sizes, heavy duty YKK zippers, displayed on mannequin torso against urban concrete backdrop, harsh directional lighting, military tactical fashion campaign, 8K",
+        "caption": "Tactical MOLLE Vest\nタクティカル モールベスト\n\nMOLLE webbing. Multiple pockets. Mission ready.\nモールシステムで拡張自在。\nStreet tactical. No missions required.\n\n#fashion #ファッション #tactical #vest #molle #タクティカル #ベスト #ミリタリー #techwear #クセ強",
+    },
+    {
+        "prompt": "High-end product photo of a reversible bomber jacket, side A in black satin with embroidered Japanese souvenir jacket style tiger and dragon artwork in gold thread, side B in plain quilted olive nylon, displayed showing both sides simultaneously partially folded, dramatic studio lighting on dark background, sukajan revival fashion, 8K",
+        "caption": "Reversible Sukajan Bomber\nリバーシブル スカジャン\n\nEmbroidered tiger x dragon. Satin x quilted nylon.\n虎と龍の刺繍が圧巻のスカジャン。\nTwo jackets in one. Flip the script.\n\n#fashion #ファッション #sukajan #スカジャン #embroidered #bomber #刺繍 #リバーシブル #和柄 #hype",
+    },
+    {
+        "prompt": "Premium product photo of a deconstructed trench coat in beige with asymmetric hem, one sleeve in original trench fabric and other sleeve in contrasting black nylon, exposed internal seam construction, raw edge details, oversized exaggerated collar, hung on minimalist metal rack against white gallery wall, avant-garde fashion editorial lighting, 8K",
+        "caption": "Deconstructed Asymmetric Trench\nデコンストラクト アシンメトリートレンチ\n\nMixed fabrics. Asymmetric hem. Exposed seams.\n左右非対称に再構築されたトレンチ。\nClassic, destroyed, rebuilt.\n\n#fashion #ファッション #deconstructed #trench #asymmetric #アシンメトリー #トレンチ #モード #avantgarde #クセ強",
+    },
+    # === クセ強め - アクセサリー ===
+    {
+        "prompt": "Luxury product photo of an oversized industrial chain necklace in brushed gunmetal finish with large padlock pendant, heavy linked chain with visible welding texture, displayed on raw concrete slab with metal shavings scattered around, dramatic harsh studio lighting, industrial punk jewelry campaign, macro detail, 8K",
+        "caption": "Padlock Chain Necklace\nパドロック チェーンネックレス\n\nGunmetal chain. Padlock pendant. Industrial weight.\nガンメタルの重厚チェーンに南京錠。\nLock it down.\n\n#fashion #ファッション #padlock #chain #industrial #南京錠 #チェーン #アクセサリー #パンク #クセ強",
+    },
+    {
+        "prompt": "Premium product photo of a crossbody chest rig bag in black cordura nylon with reflective piping, multiple front zip compartments, adjustable quick-release buckle straps, molle-style webbing on sides, displayed on dark surface with tactical accessories around it, flash photography showing reflective detail, urban utility accessory campaign, 8K",
+        "caption": "Tactical Chest Rig Bag\nタクティカル チェストリグバッグ\n\nCordura nylon. Quick-release buckle. Reflective piping.\nクイックリリースバックルで着脱簡単。\nHands free, style on lock.\n\n#fashion #ファッション #chestrig #tactical #cordura #チェストバッグ #タクティカル #utility #テックウェア #hype",
+    },
+    {
+        "prompt": "Stunning product photo of oversized wraparound visor sunglasses with gradient mirror lens shifting from blue to purple, futuristic one-piece shield design, thin titanium arms, displayed on chrome mannequin head against pure white background, clean studio lighting showing lens color shift, futuristic eyewear campaign, 8K",
+        "caption": "Mirror Shield Visor\nミラーシールド バイザー\n\nGradient mirror lens. Blue to purple shift.\nブルーからパープルに変化するミラーレンズ。\nFuture-proof eyewear.\n\n#fashion #ファッション #visor #mirror #futuristic #バイザー #ミラーレンズ #サングラス #未来 #クセ強",
+    },
 ]
 
 

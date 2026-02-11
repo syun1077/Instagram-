@@ -27,103 +27,102 @@ from modules.insta_poster import post_to_instagram
 # --- 自動投稿用のプロンプト＆キャプション一覧 ---
 # ここに好きなだけ追加してください。ランダムで1つ選ばれます。
 POSTS = [
-    # === メンズ - アウター ===
+    # === トップス ===
     {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing an oversized beige trench coat over a white hoodie and black skinny jeans, white sneakers, walking through a trendy Tokyo street with cherry blossom trees, natural daylight, street photography, 8K",
-        "caption": "Trench Coat x Hoodie\nトレンチ×パーカーの王道レイヤード\n\nThe classic layered look for spring.\nベージュトレンチにホワイトパーカーを合わせて。\nEffortlessly cool.\n\n#fashion #ファッション #trenchcoat #hoodie #layered #spring #メンズコーデ #大学生コーデ #ootd #お洒落さんと繋がりたい",
+        "prompt": "Aesthetic product photo of an oversized sage green hoodie with small embroidered bear logo on chest, heavyweight cotton, laid flat on clean white surface, soft natural window light from left side, minimal styling with dried eucalyptus branch, premium streetwear brand aesthetic, product photography, 8K",
+        "caption": "Sage Green Bear Hoodie\nくすみグリーンのベアロゴパーカー\n\nHeavyweight cotton. Oversized fit. Tiny bear detail.\n肉厚コットンにさりげないクマ刺繍。\nThe hoodie you'll live in.\n\n#fashion #ファッション #hoodie #sagegreen #streetwear #パーカー #トップス #大学生コーデ #デザイン #お洒落さんと繋がりたい",
     },
     {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a navy MA-1 bomber jacket over a grey crewneck sweatshirt, khaki chino pants, white leather sneakers, standing in front of a modern concrete building, overcast sky, street style photography, 8K",
-        "caption": "MA-1 Bomber Style\nMA-1で作るストリートカジュアル\n\nNavy bomber jacket keeps it simple and sharp.\nグレースウェット×カーキチノでバランス良く。\nA look that works anywhere.\n\n#fashion #ファッション #MA1 #bomber #streetstyle #casual #メンズコーデ #大学生コーデ #ootd #シンプルコーデ",
+        "prompt": "Beautiful flat lay product photo of a cream white cable knit sweater with chunky texture, neatly folded on light wooden table, a cup of coffee and old book beside it, warm cozy morning light, autumn aesthetic, lifestyle product photography, 8K",
+        "caption": "Chunky Cable Knit\nざっくりケーブルニット\n\nThick cable knit texture you can feel through the screen.\n触りたくなるざっくり編み。\nMade for cozy mornings.\n\n#fashion #ファッション #knit #cableknit #sweater #ニット #秋冬 #トップス #cozy #warmstyle",
     },
     {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a black leather biker jacket over a white crew neck tee, dark wash slim jeans, black Chelsea boots, leaning against a brick wall in an urban alley, golden hour lighting, editorial photography, 8K",
-        "caption": "Leather Jacket Essential\nレザージャケットは永遠の相棒\n\nBlack leather x white tee. Timeless combo.\nシンプルな白T合わせが一番かっこいい。\nEvery guy needs this in their closet.\n\n#fashion #ファッション #leatherjacket #レザー #blackandwhite #メンズコーデ #大学生コーデ #ootd #cool #style",
-    },
-    # === レディース - アウター ===
-    {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a soft camel oversized knit cardigan over a white lace camisole, light blue high waisted jeans, beige loafers, walking through a sunlit park with autumn leaves, warm golden light, fashion photography, 8K",
-        "caption": "Camel Cardigan for Autumn\nキャメルカーデで秋のゆるコーデ\n\nOversized camel knit over delicate white lace.\nゆるっとニットで大人っぽく。\nCozy and chic.\n\n#fashion #ファッション #cardigan #camel #autumn #秋コーデ #レディースコーデ #大学生コーデ #ootd #お洒落さんと繋がりたい",
+        "prompt": "Stylish product photo of a black oversized graphic tee with minimalist white line art design of a city skyline on back, premium heavy cotton, hanging on a matte black clothes hanger against raw concrete wall, moody side lighting, streetwear brand campaign, 8K",
+        "caption": "City Skyline Back Print Tee\nシティスカイラインのバックプリントT\n\nMinimalist line art on heavyweight cotton.\n背中で語るミニマルデザイン。\nSimple front, statement back.\n\n#fashion #ファッション #tshirt #graphic #streetwear #Tシャツ #バックプリント #トップス #デザイン #cool",
     },
     {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a cropped cream white puffer jacket, light grey knit dress underneath, white chunky sneakers, holding a coffee cup, standing outside a minimalist cafe with large glass windows, bright winter day, street style photography, 8K",
-        "caption": "Cropped Puffer x Knit Dress\nショートダウン×ニットワンピ\n\nCream puffer keeps the silhouette cute and warm.\nショート丈ダウンでバランスよく。\nWinter layering done right.\n\n#fashion #ファッション #pufferjacket #knitdress #winter #冬コーデ #レディースコーデ #大学生コーデ #ootd #cute",
+        "prompt": "Aesthetic product photo of a lavender cropped cardigan with pearl buttons, delicate knit texture, styled on white linen fabric with small wildflowers scattered around, soft dreamy window light, feminine fashion brand aesthetic, 8K",
+        "caption": "Lavender Pearl Cardigan\nラベンダーのパールボタンカーデ\n\nSoft knit, pearl buttons, perfect cropped length.\nパールボタンが上品なアクセント。\nA cardigan that feels like spring.\n\n#fashion #ファッション #cardigan #lavender #pearl #カーディガン #春服 #トップス #cute #girly",
     },
     {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a classic beige double-breasted blazer over a black turtleneck, dark grey tailored pants, black pointed flats, walking through a modern office lobby with marble floors, natural window light, fashion editorial, 8K",
-        "caption": "Blazer for Smart Casual\nブレザーできれいめカジュアル\n\nBeige blazer x black turtleneck. Clean and polished.\nかっちりしすぎないのがポイント。\nDress smart, feel confident.\n\n#fashion #ファッション #blazer #smartcasual #きれいめ #レディースコーデ #大学生コーデ #ootd #office #style",
-    },
-    # === メンズ - トップス ===
-    {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a striped navy and white oversized long sleeve tee, beige wide leg pants, white canvas sneakers, sitting on steps of a university campus with green lawn, bright sunny day, casual photography, 8K",
-        "caption": "Striped Tee x Wide Pants\nボーダーT×ワイドパンツの定番\n\nNavy stripes keep it classic and clean.\nゆるっとワイドパンツでリラックス感。\nCampus style staple.\n\n#fashion #ファッション #stripes #widepants #casual #キャンパスコーデ #メンズコーデ #大学生コーデ #ootd #relaxed",
+        "prompt": "Clean product photo of a navy and white striped long sleeve Breton top, classic French style, neatly folded on marble surface with a beret and sunglasses beside it, bright clean lighting, timeless fashion aesthetic, 8K",
+        "caption": "Classic Breton Stripe\n定番ボーダーロンT\n\nThe French classic that never goes out of style.\n何年経っても色褪せないボーダー。\nTimeless for a reason.\n\n#fashion #ファッション #breton #stripes #french #ボーダー #ロンT #トップス #classic #定番",
     },
     {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a sage green oversized hoodie, black jogger pants, chunky white sneakers, walking through a neon-lit shopping street at night, urban night photography, 8K",
-        "caption": "Sage Green Hoodie\nセージグリーンのゆるパーカー\n\nThis green hits different at night.\nくすみグリーンで差をつける。\nSimple but never boring.\n\n#fashion #ファッション #hoodie #sagegreen #streetstyle #パーカー #メンズコーデ #大学生コーデ #ootd #nightout",
+        "prompt": "Aesthetic product photo of a dusty pink oversized sweatshirt with small white heart embroidery on left chest, soft brushed fleece inside, laid on white bedsheets with morning sunlight streaming through sheer curtains, cozy lifestyle photography, 8K",
+        "caption": "Heart Embroidery Sweatshirt\nハート刺繍のスウェット\n\nTiny heart, big comfort. Brushed fleece inside.\n小さなハートがさりげなく可愛い。\nYour new favorite comfort piece.\n\n#fashion #ファッション #sweatshirt #heart #pink #スウェット #刺繍 #トップス #cute #お洒落さんと繋がりたい",
     },
-    # === レディース - トップス ===
+    # === パンツ / ボトムス ===
     {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a cream white cable knit sweater, brown plaid mini skirt, brown knee high boots, standing in front of a cozy bookshop with warm interior lighting, autumn afternoon, fashion photography, 8K",
-        "caption": "Cable Knit x Plaid Skirt\nケーブルニット×チェックスカート\n\nWarm cable knit meets cute plaid.\n秋の定番コーデ、本屋さん巡りの日。\nBookish and beautiful.\n\n#fashion #ファッション #cableknit #plaid #autumn #秋コーデ #レディースコーデ #大学生コーデ #ootd #cozy",
-    },
-    {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a lavender oversized sweatshirt with small embroidered flower on chest, white pleated midi skirt, white platform sneakers, sitting on a bench in a flower garden, soft spring light, dreamy photography, 8K",
-        "caption": "Lavender Sweatshirt\nラベンダースウェットで春気分\n\nSoft lavender with a tiny flower detail.\nさりげない刺繍がポイント。\nSpring mood in one outfit.\n\n#fashion #ファッション #lavender #sweatshirt #spring #春コーデ #レディースコーデ #大学生コーデ #ootd #pastel",
-    },
-    # === メンズ - パンツ / 全身 ===
-    {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a plain white oversized tee tucked into dark olive cargo pants, black high top sneakers, silver chain necklace, standing on a rooftop with city skyline behind, sunset golden hour, fashion photography, 8K",
-        "caption": "Cargo Pants on the Rooftop\nカーゴパンツで都会のサンセット\n\nWhite tee x olive cargo. Keep it easy.\nシンプルに着るのが今っぽい。\nSunset vibes, city style.\n\n#fashion #ファッション #cargo #cargopants #sunset #カーゴパンツ #メンズコーデ #大学生コーデ #ootd #streetwear",
+        "prompt": "Stylish product photo of dark olive cargo pants with clean tapered silhouette, multiple utility pockets with matte black snaps, laid flat on dark wooden floor with white sneakers placed beside them, overhead flat lay view, modern streetwear aesthetic, 8K",
+        "caption": "Tapered Cargo Pants\nテーパードカーゴパンツ\n\nClean tapered fit with functional pockets.\nすっきりシルエットで大人なカーゴ。\nNot your dad's cargo pants.\n\n#fashion #ファッション #cargo #pants #streetwear #カーゴパンツ #ボトムス #メンズ #デザイン #cool",
     },
     {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a denim-on-denim outfit with light wash oversized denim jacket and darker wash straight jeans, white tee underneath, retro sunglasses on head, standing at a coastal pier with ocean background, bright summer day, 8K",
-        "caption": "Denim on Denim\nデニム×デニムの夏スタイル\n\nDouble denim done right by the sea.\n濃淡を変えるのがコツ。\nSummer vibes only.\n\n#fashion #ファッション #denim #doubledenim #summer #デニム #夏コーデ #メンズコーデ #大学生コーデ #ootd",
-    },
-    # === レディース - ボトムス / 全身 ===
-    {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a fitted black ribbed top, high waisted cream wide leg trousers, gold hoop earrings, small black crossbody bag, walking through a European style cobblestone street with outdoor cafes, afternoon sun, street style photography, 8K",
-        "caption": "Black Top x Cream Wide Pants\n黒リブ×クリームワイドの大人バランス\n\nSimple black and cream. Always elegant.\nモノトーンにゴールドアクセで抜け感。\nEffortless elegance.\n\n#fashion #ファッション #widepants #monochrome #elegant #大人コーデ #レディースコーデ #大学生コーデ #ootd #chic",
+        "prompt": "Beautiful product photo of light wash wide leg jeans with natural fading and subtle distressing, draped over a vintage wooden chair, sunlit room with white walls, relaxed California aesthetic, denim brand campaign photography, 8K",
+        "caption": "Wide Leg Vintage Wash Denim\nワイドレッグのヴィンテージウォッシュ\n\nNatural fading that looks like years of wear.\n絶妙な色落ちが最高にかっこいい。\nDenim that tells a story.\n\n#fashion #ファッション #denim #jeans #wideleg #デニム #ジーンズ #ボトムス #vintage #style",
     },
     {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a light blue denim overall dress over a white puff sleeve blouse, white canvas sneakers, holding a straw basket bag, standing in a sunflower field, bright summer day, cheerful photography, 8K",
-        "caption": "Denim Overall in Sunflowers\nデニムオーバーオールでひまわり畑へ\n\nDenim overalls x puff sleeves for summer.\nブラウス合わせで大人可愛く。\nSummer adventure outfit.\n\n#fashion #ファッション #overalls #denim #summer #ひまわり #夏コーデ #レディースコーデ #大学生コーデ #ootd",
-    },
-    # === メンズ - シューズ / アクセサリー ===
-    {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a black oversized graphic tee, grey sweatpants, brand new white leather low-top sneakers, silver watch, sitting on a skatepark bench with graffiti wall behind, afternoon light, street photography, 8K",
-        "caption": "Fresh White Kicks\n白スニーカーは正義\n\nClean white sneakers make any fit look better.\n新品の白スニーカーはテンション上がる。\nFresh kicks, fresh start.\n\n#fashion #ファッション #whitesneakers #sneakers #streetwear #白スニーカー #メンズコーデ #大学生コーデ #ootd #kicks",
+        "prompt": "Aesthetic product photo of cream white high-waisted pleated wide pants, flowing lightweight fabric, hanging on a gold clothes hanger against soft beige wall, gentle breeze effect on fabric, elegant minimal styling, 8K",
+        "caption": "Pleated Wide Pants\nプリーツワイドパンツ\n\nFlowing fabric with a perfect pleated drape.\nふわっと揺れるプリーツが美しい。\nElegance in every step.\n\n#fashion #ファッション #widepants #pleated #cream #ワイドパンツ #プリーツ #ボトムス #elegant #きれいめ",
     },
     {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a navy knit polo shirt, beige tailored shorts, brown leather sandals, woven bracelet, walking on a wooden boardwalk near the beach, ocean breeze, summer evening light, resort photography, 8K",
-        "caption": "Summer Resort Casual\n夏のリゾートカジュアル\n\nKnit polo x tailored shorts by the sea.\nニットポロでキレイめな海コーデ。\nVacation mode: ON.\n\n#fashion #ファッション #resort #summer #knitpolo #リゾート #夏コーデ #メンズコーデ #大学生コーデ #ootd",
-    },
-    # === レディース - シューズ / アクセサリー ===
-    {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a white off-shoulder blouse, light wash straight jeans, strappy tan leather sandals, layered gold necklaces, straw hat in hand, walking along a seaside promenade at sunset, warm golden light, summer photography, 8K",
-        "caption": "Golden Hour Seaside Look\nゴールデンアワーの海沿いコーデ\n\nWhite off-shoulder x gold layers. Summer perfection.\n夕日に映えるゴールドアクセ。\nChasing sunsets in style.\n\n#fashion #ファッション #goldenhour #seaside #summer #夏コーデ #レディースコーデ #大学生コーデ #ootd #sunset",
+        "prompt": "Product photo of black tapered jogger pants with clean minimal design, subtle ribbed cuffs, premium fabric texture visible, neatly folded on white marble surface next to a sleek water bottle and earbuds, modern lifestyle flat lay, 8K",
+        "caption": "Minimal Black Joggers\nミニマルブラックジョガー\n\nClean lines, premium fabric, zero logos.\nロゴなしの潔いミニマルデザイン。\nFrom gym to cafe, no problem.\n\n#fashion #ファッション #joggers #minimal #black #ジョガーパンツ #ボトムス #ミニマル #デザイン #streetwear",
     },
     {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a fitted black turtleneck, camel wool coat, dark blue straight jeans, brown suede ankle boots, small brown leather bag, walking through a tree-lined avenue with fallen leaves, crisp autumn light, editorial photography, 8K",
-        "caption": "Camel Coat x Black Turtleneck\nキャメルコート×黒タートル\n\nTimeless camel coat for the perfect autumn walk.\n秋の並木道にキャメルコートが映える。\nClassic never goes out of style.\n\n#fashion #ファッション #camelcoat #turtleneck #autumn #秋コーデ #レディースコーデ #大学生コーデ #ootd #classic",
+        "prompt": "Stylish product photo of a brown plaid mini skirt with gold button detail on front, A-line silhouette, styled flat on cream knit blanket with autumn leaves and a coffee cup, warm golden afternoon light, preppy fashion aesthetic, 8K",
+        "caption": "Plaid Mini Skirt\nチェック柄ミニスカート\n\nGold buttons and classic plaid. Autumn essential.\nゴールドボタンがポイントの秋カラー。\nPreppy never looked this good.\n\n#fashion #ファッション #plaid #skirt #autumn #チェック #スカート #ボトムス #preppy #秋服",
     },
-    # === メンズ - きれいめ ===
+    # === シューズ ===
     {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a white oxford button-down shirt with sleeves rolled up, navy chino pants, brown leather loafers, minimal silver watch, standing in a bright art gallery with white walls, clean natural lighting, smart casual photography, 8K",
-        "caption": "Smart Casual at the Gallery\n美術館デートのスマートカジュアル\n\nWhite oxford x navy chinos. Clean and sharp.\nシャツの袖まくりでこなれ感を。\nArt meets style.\n\n#fashion #ファッション #smartcasual #oxford #shirt #きれいめ #メンズコーデ #大学生コーデ #ootd #dateoutfit",
-    },
-    {
-        "prompt": "Fashion photo of a young handsome Japanese male model with short black hair and clean face, wearing a charcoal grey oversized knit sweater, black tapered pants, white minimalist sneakers, tote bag on shoulder, walking past a modern glass building in the rain with umbrella, rainy city aesthetic, street photography, 8K",
-        "caption": "Rainy Day Grey Knit\n雨の日のグレーニット\n\nCharcoal knit keeps you warm and stylish in the rain.\n雨の街に溶け込むグレートーン。\nBad weather, good style.\n\n#fashion #ファッション #knit #grey #rainyday #雨の日コーデ #メンズコーデ #大学生コーデ #ootd #mood",
-    },
-    # === レディース - きれいめ ===
-    {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a soft pink satin slip dress layered over a white tee, white canvas sneakers, small pearl earrings, sitting at an outdoor cafe terrace with potted plants, soft afternoon light, lifestyle photography, 8K",
-        "caption": "Slip Dress x Tee Layering\nスリップドレス×Tシャツの抜け感コーデ\n\nPink satin slip over a casual white tee.\nドレスをカジュアルダウンするのが今っぽい。\nDressy and casual at once.\n\n#fashion #ファッション #slipdress #layering #pink #カフェコーデ #レディースコーデ #大学生コーデ #ootd #trendy",
+        "prompt": "Premium product photo of brand new white leather low-top sneakers with clean stitching and minimal design, placed on polished concrete floor, soft directional studio lighting creating gentle shadows, sneaker brand campaign style, close-up showing material texture, 8K",
+        "caption": "Clean White Leather Sneakers\nクリーンな白レザースニーカー\n\nPure white leather. No logos. Just clean design.\n真っ白なレザーの美しさ。\nThe only white sneakers you need.\n\n#fashion #ファッション #sneakers #white #leather #白スニーカー #スニーカー #シューズ #minimal #kicks",
     },
     {
-        "prompt": "Fashion photo of a young beautiful Japanese female model with medium length dark brown hair, wearing a mint green oversized shirt jacket over a white crop tank top, beige linen wide pants, white mules, small gold hoop earrings, browsing at an outdoor weekend market with colorful stalls, bright sunny day, lifestyle photography, 8K",
-        "caption": "Mint Shirt Jacket at the Market\nミントシャツジャケットで休日マーケットへ\n\nMint green shacket for a relaxed weekend vibe.\nリネンパンツ合わせで爽やかに。\nWeekend mood, market finds.\n\n#fashion #ファッション #shacket #mint #weekend #休日コーデ #レディースコーデ #大学生コーデ #ootd #linen",
+        "prompt": "Aesthetic product photo of brown suede Chelsea boots with elastic side panels, placed on weathered wooden surface with dried autumn leaves scattered around, warm side lighting, British heritage brand aesthetic, showing suede texture detail, 8K",
+        "caption": "Suede Chelsea Boots\nスエードチェルシーブーツ\n\nRich brown suede with a timeless silhouette.\n深みのあるスエードが上品。\nOne pair, endless outfits.\n\n#fashion #ファッション #chelseaboots #suede #brown #チェルシーブーツ #ブーツ #シューズ #autumn #classic",
+    },
+    {
+        "prompt": "Stylish product photo of chunky white platform sneakers with thick rubber sole, placed on pink background, overhead angle showing the sole design, trendy Y2K inspired aesthetic, clean bright studio lighting, 8K",
+        "caption": "Chunky Platform Sneakers\nチャンキー厚底スニーカー\n\nBold sole. Big statement. Light as air.\n存在感のある厚底で脚長効果。\nWalk taller, feel bolder.\n\n#fashion #ファッション #platform #sneakers #chunky #厚底 #スニーカー #シューズ #トレンド #cute",
+    },
+    {
+        "prompt": "Beautiful product photo of tan leather strappy sandals with gold buckle details, placed on white sand with a seashell beside them, warm golden sunset light, summer resort fashion aesthetic, 8K",
+        "caption": "Gold Buckle Sandals\nゴールドバックルサンダル\n\nTan leather meets gold hardware. Summer luxury.\nゴールド金具がリゾート感。\nYour feet deserve these.\n\n#fashion #ファッション #sandals #leather #summer #サンダル #シューズ #ゴールド #リゾート #夏",
+    },
+    # === アウター ===
+    {
+        "prompt": "Premium product photo of a beige oversized trench coat with classic double-breasted design, belt detail, hung on a wooden coat stand in a minimalist white room, soft morning light from large window, luxury outerwear brand aesthetic, fabric texture visible, 8K",
+        "caption": "Classic Trench Coat\nクラシックトレンチコート\n\nTimeless double-breasted design in perfect beige.\n完璧なベージュの永遠の定番。\nThe coat that goes with everything.\n\n#fashion #ファッション #trenchcoat #beige #classic #トレンチ #アウター #コート #定番 #お洒落さんと繋がりたい",
+    },
+    {
+        "prompt": "Stylish product photo of a navy MA-1 bomber jacket with orange lining visible at collar, matte nylon fabric, laid flat on industrial metal surface, overhead angle, moody directional lighting, streetwear brand aesthetic, 8K",
+        "caption": "Navy MA-1 Bomber\nネイビーMA-1ボンバー\n\nClassic MA-1 with signature orange lining.\nオレンジ裏地がチラ見えするのがたまらない。\nStreet classic, forever.\n\n#fashion #ファッション #MA1 #bomber #navy #ボンバージャケット #アウター #ストリート #cool #定番",
+    },
+    {
+        "prompt": "Aesthetic product photo of a cropped cream puffer jacket with matte finish, soft puffy texture, hanging on a clear acrylic hanger against pale blue wall, bright winter daylight, cute and cozy outerwear aesthetic, 8K",
+        "caption": "Cropped Cream Puffer\nクロップドクリームパファー\n\nShort length keeps the silhouette balanced and cute.\nショート丈で可愛く防寒。\nStay warm without the bulk.\n\n#fashion #ファッション #puffer #cream #cropped #ダウン #アウター #冬服 #cute #防寒",
+    },
+    {
+        "prompt": "Product photo of a black leather biker jacket with silver hardware and asymmetric zip, displayed on a matte black mannequin torso against dark grey background, dramatic side lighting highlighting leather texture, rock fashion aesthetic, 8K",
+        "caption": "Leather Biker Jacket\nレザーバイカージャケット\n\nAsymmetric zip, silver hardware, rebel energy.\n斜めジップにシルバー金具。永遠のかっこよさ。\nOne jacket to rule them all.\n\n#fashion #ファッション #leather #bikerjacket #black #レザー #ジャケット #アウター #cool #rock",
+    },
+    # === アクセサリー ===
+    {
+        "prompt": "Elegant jewelry flat lay of layered gold chain necklaces in three different lengths and styles on white marble surface, soft warm window light, close-up showing chain texture and clasp details, minimal luxury aesthetic, 8K",
+        "caption": "Layered Gold Chains\nレイヤードゴールドチェーン\n\nThree chains, three lengths, one perfect stack.\n重ね付けで一気にこなれ感。\nLayer up, level up.\n\n#fashion #ファッション #goldchain #necklace #layered #ゴールド #ネックレス #アクセサリー #jewelry #お洒落さんと繋がりたい",
+    },
+    {
+        "prompt": "Aesthetic product photo of a minimalist silver watch with white dial and mesh band, placed on dark slate surface with soft reflection, clean studio lighting, close-up macro showing watch face detail, Scandinavian design aesthetic, 8K",
+        "caption": "Minimal Silver Watch\nミニマルシルバーウォッチ\n\nClean dial, mesh band, Scandinavian simplicity.\n無駄のないデザインが逆に映える。\nTime looks good on you.\n\n#fashion #ファッション #watch #silver #minimal #腕時計 #シルバー #アクセサリー #ミニマル #デザイン",
+    },
+    {
+        "prompt": "Cute flat lay photo of hair accessories set including pearl hair clips, velvet scrunchies in dusty rose and sage, and a tortoiseshell claw clip, arranged on soft pink fabric, dreamy soft lighting, aesthetic accessory photography, 8K",
+        "caption": "Hair Accessory Set\nヘアアクセサリーコレクション\n\nPearl clips, velvet scrunchies, tortoiseshell claw.\nパール、ベルベット、べっ甲。全部欲しい。\nSmall details, big impact.\n\n#fashion #ファッション #hairaccessories #pearl #scrunchie #ヘアアクセ #アクセサリー #パール #cute #お洒落",
+    },
+    {
+        "prompt": "Stylish product photo of a canvas tote bag in natural beige with a small minimalist logo print, sitting on a wooden cafe table next to a latte and a book, warm afternoon light, everyday carry lifestyle aesthetic, 8K",
+        "caption": "Everyday Canvas Tote\nデイリーキャンバストート\n\nSimple canvas, endless possibilities.\nシンプルだからこそ毎日使える。\nThe bag that goes everywhere.\n\n#fashion #ファッション #totebag #canvas #minimal #トートバッグ #バッグ #アクセサリー #デイリー #シンプル",
     },
 ]
 

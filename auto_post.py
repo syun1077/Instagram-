@@ -62,177 +62,154 @@ def pick_unused_post(posts: list[dict]) -> tuple[int, dict]:
 
 
 # --- 自動投稿用のプロンプト＆キャプション一覧 ---
-# ここに好きなだけ追加してください。ランダムで1つ選ばれます。
+# 高級ブランドインスパイアのデザイン。ランダムで1つ選ばれます。
 POSTS = [
-    # === トップス - ストリート / スポーツMIX ===
+    # === トップス - ハイブランドインスパイア ===
     {
-        "prompt": "Luxury brand product photo of a black oversized hoodie with bold white three-stripe detail running down both sleeves, large embossed trefoil-style logo on chest, premium heavyweight 450gsm cotton fleece, kangaroo pocket with hidden zip, laid flat on matte black surface with dramatic studio lighting, high-end sportswear campaign aesthetic, extreme fabric texture detail visible, 8K",
-        "caption": "Three-Stripe Oversized Hoodie\nスリーストライプ オーバーサイズパーカー\n\n450gsm heavyweight fleece. Bold stripe detail on sleeves.\n肉厚フリースにスリーストライプが映える。\nStreet meets luxury.\n\n#fashion #ファッション #hoodie #streetwear #stripes #パーカー #ストリート #トレンド #hype #お洒落さんと繋がりたい",
+        "prompt": "Luxury product photo of a black oversized hoodie with bold diagonal white stripes crossing the front and industrial yellow caution tape-style belt strap hanging from the waist, raw cut asymmetric hem, heavyweight 500gsm cotton, large arrow graphic print on back in white, laid flat on matte black marble surface, dramatic directional studio lighting, high fashion streetwear campaign, 8K",
+        "caption": "Diagonal Arrow Oversized Hoodie\nダイアゴナルアロー オーバーサイズパーカー\n\nIndustrial tape detail. Arrow print. 500gsm weight.\nインダストリアルテープと矢印プリントの融合。\nWhere the street meets the runway.\n\n#fashion #ファッション #hoodie #oversized #avantgarde #パーカー #ストリート #モード #highfashion #お洒落さんと繋がりたい",
     },
     {
-        "prompt": "Premium product photo of a vintage-washed burgundy track jacket with white contrast piping along sleeves and collar, retro zip-up design with stand collar, embroidered crest logo on left chest, laid on weathered leather surface, warm editorial lighting, 90s revival sportswear aesthetic, fabric texture visible, 8K",
-        "caption": "Retro Track Jacket\nレトロトラックジャケット\n\nVintage wash with contrast piping. 90s vibes reborn.\nバーガンディの色落ち感がたまらない。\nThe 90s called, we kept the jacket.\n\n#fashion #ファッション #trackjacket #retro #90s #トラックジャケット #ヴィンテージ #トレンド #streetwear #cool",
+        "prompt": "High-end product photo of a deconstructed oversized blazer in black with exposed white basting stitches running along seams, four-stitch white thread detail on back, no buttons, raw edge lapels, slightly shrunken left sleeve revealing the lining, draped over clear acrylic mannequin against grey concrete wall, avant-garde fashion house editorial lighting, 8K",
+        "caption": "Deconstructed Four-Stitch Blazer\nデコンストラクト フォーステッチブレザー\n\nExposed basting. Raw lapels. Intentionally unfinished.\nあえて未完成に仕上げた脱構築の美学。\nThe art of imperfection.\n\n#fashion #ファッション #blazer #deconstructed #avantgarde #ブレザー #脱構築 #モード #highfashion #デザイン",
     },
     {
-        "prompt": "High-end product photo of a forest green oversized crewneck sweatshirt with large tonal puff-print logo across chest, ribbed cuffs and hem, premium brushed fleece interior visible at neckline, displayed on clear acrylic stand against concrete wall, moody directional lighting, luxury streetwear brand campaign, 8K",
-        "caption": "Puff Print Logo Crewneck\nパフプリントロゴ クルーネック\n\nTonal puff-print logo on forest green fleece.\n立体パフプリントの存在感。\nLogo game, elevated.\n\n#fashion #ファッション #crewneck #logo #streetwear #スウェット #ロゴ #トレンド #hype #デザイン",
+        "prompt": "Luxury product photo of a black oversized distressed hoodie with multiple intentional rips and holes across the front, faded logo print barely visible underneath layers of distressing, extremely dropped shoulders hitting mid-arm, extra long sleeves with thumbholes, heavyweight washed cotton with vintage feel, laid flat on industrial concrete floor, harsh overhead light creating deep shadows in the rips, luxury grunge aesthetic, 8K",
+        "caption": "Destroyed Luxury Hoodie\nデストロイド ラグジュアリーパーカー\n\nIntentional rips. Faded prints. Washed-out luxury.\nダメージ加工に隠されたラグジュアリー。\nBeautifully broken.\n\n#fashion #ファッション #destroyed #hoodie #luxury #ダメージ #パーカー #グランジ #highfashion #hype",
     },
     {
-        "prompt": "Stunning product photo of a cream and black color-block varsity jacket with genuine leather sleeves, chenille letter patch on chest, snap button front, striped ribbed collar cuffs and hem, hung on vintage wooden hanger against dark wall, warm dramatic lighting showing leather grain texture, American prep meets streetwear, 8K",
-        "caption": "Varsity Letterman Jacket\nバーシティ レターマンジャケット\n\nLeather sleeves x chenille patch. Campus icon.\n本革スリーブにシェニールパッチ。\nVarsity style never gets old.\n\n#fashion #ファッション #varsity #letterman #jacket #バーシティ #アメカジ #トレンド #streetwear #cool",
+        "prompt": "Premium product photo of an oversized pitch black long sleeve t-shirt with draped cowl neckline, elongated body reaching mid-thigh, asymmetric raw hem cut at a dramatic angle, double layered front panel creating depth, matte jersey fabric with subtle ribbed texture, displayed on jet black mannequin against pure black background with single harsh side light, dark avant-garde fashion, 8K",
+        "caption": "Draped Cowl Long Tee\nドレープカウル ロングT\n\nAsymmetric hem. Cowl neck. Layered panels.\n異素材レイヤードの立体ドレープ。\nDarkness as a design language.\n\n#fashion #ファッション #darkfashion #drape #avantgarde #ドレープ #モード #黒 #darkwear #デザイン",
     },
     {
-        "prompt": "Luxury product photo of a mesh-panel black jersey top with geometric cutout pattern on shoulders and back, sporty number 07 print in reflective silver, slim athletic fit, displayed flat on glossy white surface with dramatic overhead studio lighting showing mesh detail, athleisure fashion campaign, 8K",
-        "caption": "Mesh Detail Jersey Top\nメッシュディテール ジャージトップ\n\nGeometric mesh panels. Reflective number print.\nスポーティなメッシュ切り替えデザイン。\nAthleisure, but make it fashion.\n\n#fashion #ファッション #jersey #mesh #athleisure #ジャージ #メッシュ #スポーツMIX #トレンド #デザイン",
+        "prompt": "Stunning product photo of a cream white oversized knit sweater with visible intrecciato-style woven texture across the entire body, thick chunky yarn showing each weave intersection clearly, ribbed mock neck, dropped shoulders, laid on warm beige linen surface, soft golden window light, quiet luxury Italian craftsmanship aesthetic, 8K",
+        "caption": "Intrecciato Weave Knit\nイントレチャート ウィーブニット\n\nSignature woven texture. Chunky yarn. Quiet luxury.\n編み込みテクスチャーが主役の贅沢ニット。\nCraftsmanship you can see and feel.\n\n#fashion #ファッション #knit #woven #quietluxury #ニット #編み込み #イタリア #craftsmanship #上品",
     },
     {
-        "prompt": "Premium product photo of an oversized tie-dye gradient hoodie fading from deep indigo to sky blue to white, heavy cotton french terry fabric, raw edge hem detail, dropped shoulders, laid flat on white marble surface, bright clean studio lighting, modern streetwear brand lookbook, 8K",
-        "caption": "Gradient Tie-Dye Hoodie\nグラデーション タイダイパーカー\n\nIndigo to sky blue hand-dyed gradient.\nインディゴからスカイブルーへの美しいグラデ。\nEvery piece is one of a kind.\n\n#fashion #ファッション #tiedye #gradient #hoodie #タイダイ #パーカー #グラデーション #ストリート #unique",
-    },
-    # === ボトムス - トレンド ===
-    {
-        "prompt": "High-end product photo of black side-stripe track pants with white double-stripe detail from waist to ankle, tapered fit with zip ankle cuffs, elastic waistband with internal drawcord, technical woven fabric with slight sheen, laid flat on polished concrete floor with retro sneakers beside them, sportswear brand campaign lighting, 8K",
-        "caption": "Double-Stripe Track Pants\nダブルストライプ トラックパンツ\n\nSide stripes. Zip ankles. Clean taper.\nサイドラインとジップアンクルでスポーティに。\nFrom track to street.\n\n#fashion #ファッション #trackpants #stripes #sportswear #トラックパンツ #ストリート #トレンド #テーパード #cool",
+        "prompt": "High-end product photo of a black technical nylon re-nylon shirt jacket with pointed collar, concealed snap button front, triangular enamel logo badge on chest pocket, lightweight crinkled recycled nylon fabric with slight sheen, displayed on minimalist chrome hanger against white gallery wall, clean modernist studio lighting, Italian technical luxury aesthetic, 8K",
+        "caption": "Re-Nylon Technical Shirt\nリナイロン テクニカルシャツ\n\nRecycled nylon. Triangle badge. Technical luxury.\nリサイクルナイロンの光沢と三角ロゴの存在感。\nSustainability meets sophistication.\n\n#fashion #ファッション #nylon #technical #luxury #ナイロン #テクニカル #サステナブル #イタリア #モード",
     },
     {
-        "prompt": "Luxury product photo of stone wash baggy cargo jeans with oversized flap pockets on thighs, heavy denim fabric with visible selvedge detail, contrast orange stitching throughout, draped over industrial metal pipe rack, harsh directional lighting creating strong shadows, raw denim brand campaign aesthetic, 8K",
-        "caption": "Baggy Cargo Denim\nバギーカーゴデニム\n\nOversized flap pockets. Contrast stitching. Raw edge.\nフラップポケットとオレンジステッチの存在感。\nDenim with an attitude.\n\n#fashion #ファッション #cargo #denim #baggy #カーゴデニム #バギー #デニム #ストリート #hype",
+        "prompt": "Luxury product photo of a double-layered sheer organza shirt in black with solid black tank underneath visible through translucent fabric, oversized boxy fit, mother of pearl buttons, French cuffs, delicate fabric catching light showing weave pattern, hung on black velvet hanger against smoky grey backdrop, moody editorial lighting, haute couture ready-to-wear aesthetic, 8K",
+        "caption": "Sheer Organza Layered Shirt\nシアーオーガンザ レイヤードシャツ\n\nTranslucent organza over solid tank. Pearl buttons.\n透けるオーガンザが生む奥行き。\nRevealing without revealing.\n\n#fashion #ファッション #sheer #organza #layered #シアー #オーガンザ #レイヤード #モード #hautecouture",
     },
     {
-        "prompt": "Stunning product photo of olive green parachute pants with elastic toggle hem, multiple cargo pockets with velcro closures, lightweight nylon ripstop fabric with slight crinkle texture, styled on matte white surface with tactical belt coiled beside them, clean bright studio lighting, gorpcore fashion trend, 8K",
-        "caption": "Parachute Cargo Pants\nパラシュートカーゴパンツ\n\nToggle hem. Ripstop nylon. Gorpcore essential.\nトグルヘムでシルエット自在。\nThe pants everyone is wearing right now.\n\n#fashion #ファッション #parachutepants #gorpcore #cargo #パラシュートパンツ #ゴープコア #トレンド #ストリート #2025",
+        "prompt": "Premium product photo of an oversized grey marl hoodie with the entire front printed with a large trompe-l'oeil photorealistic tuxedo jacket design including lapels, pocket square, and boutonniere, heavyweight cotton fleece, regular kangaroo pocket hidden within the print, laid flat on polished marble, bright clean studio lighting, conceptual fashion brand campaign, 8K",
+        "caption": "Trompe L'oeil Tuxedo Hoodie\nトロンプルイユ タキシードパーカー\n\nPhotorealistic tuxedo print on a hoodie. Formal meets casual.\nだまし絵タキシードをパーカーに。\nBlack tie? More like black hoodie.\n\n#fashion #ファッション #trompeoeil #tuxedo #hoodie #トロンプルイユ #パーカー #コンセプト #ユニーク #hype",
+    },
+    # === ボトムス - ハイブランドインスパイア ===
+    {
+        "prompt": "Luxury product photo of extremely oversized wide-leg jeans in washed medium blue denim with exaggerated 40-inch leg opening, high waist with double button, heavy 14oz rigid denim with raw selvedge hem dragging on floor, industrial metal rivets, draped over chrome pipe rack casting dramatic shadows, runway denim editorial lighting, 8K",
+        "caption": "Ultra Wide-Leg Runway Denim\nウルトラワイドレッグ ランウェイデニム\n\nExtreme 40-inch leg opening. Raw selvedge. Heavy rigid denim.\n40インチの圧巻フレア。ランウェイから街へ。\nDenim taken to the absolute extreme.\n\n#fashion #ファッション #widelegdenim #runway #selvedge #ワイドデニム #ランウェイ #デニム #モード #avantgarde",
     },
     {
-        "prompt": "Premium product photo of cream colored wide-leg pleated trousers with sharp center crease, high waist design with double button closure, luxury wool-blend fabric with visible herringbone weave pattern, hung on gold clothes hanger against warm beige linen backdrop, soft golden lighting, quiet luxury fashion aesthetic, 8K",
-        "caption": "Herringbone Wide Trousers\nヘリンボーン ワイドトラウザー\n\nSharp crease. Herringbone weave. Quiet luxury.\nヘリンボーン織りのセンタープレス。\nUnderstated elegance speaks volumes.\n\n#fashion #ファッション #trousers #herringbone #quietluxury #トラウザー #ワイドパンツ #きれいめ #上品 #トレンド",
+        "prompt": "High-end product photo of tailored black wool trousers with integrated leather belt that wraps and buckles at the front, sharp pressed crease, slightly cropped ankle length, slant pockets with leather trim, premium Italian virgin wool with visible diagonal twill weave, hung on gold hanger against cream backdrop, soft diffused studio lighting, quiet luxury tailoring aesthetic, 8K",
+        "caption": "Integrated Belt Wool Trousers\nインテグレーテッドベルト ウールトラウザー\n\nBuilt-in leather belt. Italian virgin wool. Sharp crease.\n一体型レザーベルトのミニマル美。\nTailoring that speaks for itself.\n\n#fashion #ファッション #trousers #tailored #wool #テーラード #トラウザー #quietluxury #イタリア #ミニマル",
     },
     {
-        "prompt": "High-end product photo of a black satin midi skirt with high slit on left side, invisible zip closure, liquid-like fabric sheen catching studio light, draped over clear acrylic chair against dark background, dramatic moody side lighting, minimalist luxury brand aesthetic, 8K",
-        "caption": "Satin Slit Midi Skirt\nサテンスリット ミディスカート\n\nLiquid satin with a daring high slit.\n光沢サテンの大胆スリット。\nDay to night in one piece.\n\n#fashion #ファッション #satin #midi #skirt #サテン #スカート #ミディ #モード #トレンド",
-    },
-    # === シューズ - ハイプ ===
-    {
-        "prompt": "Premium sneaker product photo of retro running shoes in grey suede and mesh upper with three side stripes in white, chunky gum rubber outsole, vintage-style tongue label, placed on reflective dark surface with dramatic rim lighting showing material details, sneaker campaign style, close-up from 45 degree angle, 8K",
-        "caption": "Retro Runner - Grey Suede\nレトロランナー グレースエード\n\nSuede and mesh upper. Gum sole. Classic lines.\nスエード×メッシュにガムソール。\nThe retro runner making a comeback.\n\n#fashion #ファッション #sneakers #retrorunner #suede #スニーカー #レトロ #ガムソール #kicks #トレンド",
+        "prompt": "Stunning product photo of black track pants with tuxedo-style satin side stripe running from waist to ankle, elasticated waist with drawcord, tapered slim fit, technical jersey fabric with four-way stretch, subtle tonal logo embroidery on thigh, laid flat on polished black surface with patent leather shoes beside, luxury athleisure editorial, 8K",
+        "caption": "Satin Stripe Tuxedo Track Pants\nサテンストライプ タキシードトラックパンツ\n\nTuxedo satin stripe on tech jersey. Formal x athletic.\nタキシードのサテンラインをトラックパンツに。\nRed carpet from the waist down.\n\n#fashion #ファッション #trackpants #satin #tuxedo #トラックパンツ #サテン #アスレジャー #luxurysport #モード",
     },
     {
-        "prompt": "Luxury sneaker photo of chunky basketball-inspired high-tops in white leather with perforated toe box, padded high collar, oversized tongue with bold branding tab, thick sculpted midsole with visible air cushion, displayed on glass shelf with dramatic under-lighting, premium sneaker brand campaign, 8K",
-        "caption": "Chunky Basketball High-Tops\nチャンキー バスケットハイトップ\n\nPadded collar. Air cushion sole. Court to street.\nボリュームソールにパッド入りカラー。\nBig shoes, bigger statement.\n\n#fashion #ファッション #hightops #basketball #chunky #ハイトップ #スニーカー #バッシュ #hype #kicks",
+        "prompt": "Luxury product photo of sky blue leather trousers in butter-soft lambskin, straight relaxed fit, high waist with wide waistband, tonal stitching throughout, visible grain texture of premium leather, displayed draped over brutalist concrete bench, cool blue-toned studio lighting, Italian luxury leather goods campaign, macro detail of leather grain visible, 8K",
+        "caption": "Lambskin Leather Trousers\nラムスキン レザートラウザー\n\nButter-soft lambskin. Sky blue. Tonal stitching.\nバターのように柔らかいラムスキン。\nLuxury you can touch through the screen.\n\n#fashion #ファッション #leather #lambskin #trousers #レザー #ラムスキン #トラウザー #luxury #イタリア",
     },
     {
-        "prompt": "Stunning product photo of black and white panda dunk low-top sneakers, smooth leather upper with contrasting color blocking, flat rubber sole, clean stitching detail visible, placed on raw concrete block with harsh studio lighting from above, hype sneaker release photography, 8K",
-        "caption": "Panda Colorblock Lows\nパンダカラーブロック ローカット\n\nBlack and white leather. Clean. Iconic.\n白×黒のカラーブロック。永遠の定番。\nThe pair that goes with literally everything.\n\n#fashion #ファッション #sneakers #panda #colorblock #ローカット #スニーカー #モノトーン #定番 #hype",
+        "prompt": "Premium product photo of black nylon parachute cargo pants with multiple oversized 3D pockets protruding from thighs and calves, adjustable toggle drawstring at hem and knees, technical waterproof coating visible as slight sheen, heavy duty metal zipper details, styled on dark metal grid surface, harsh industrial lighting, functional luxury techwear aesthetic, 8K",
+        "caption": "3D Pocket Technical Cargo\n3Dポケット テクニカルカーゴ\n\nOversized 3D pockets. Toggle adjustable. Waterproof nylon.\n立体ポケットが生む圧倒的な存在感。\nUtility elevated to art.\n\n#fashion #ファッション #cargo #techwear #3Dpocket #カーゴパンツ #テックウェア #機能美 #luxury #モード",
+    },
+    # === シューズ - ハイブランドインスパイア ===
+    {
+        "prompt": "Luxury sneaker product photo of chunky platform sneakers in triple white leather with exaggerated 4-inch sculpted sole, multiple layered panels with perforations, oversized tongue with embossed logo, visible air unit in heel, placed on white marble pedestal with dramatic under-lighting showing sole architecture, luxury sneaker campaign, close-up 45 degree angle, 8K",
+        "caption": "Sculpted Platform Sneakers\nスカルプテッド プラットフォームスニーカー\n\nExaggerated 4-inch sole. Sculpted architecture. Triple white.\n4インチの彫刻的ソール。存在感の塊。\nWalking on art.\n\n#fashion #ファッション #platformsneakers #chunky #luxury #厚底 #スニーカー #プラットフォーム #hype #highfashion",
     },
     {
-        "prompt": "Premium product photo of beige suede hiking boots with chunky vibram-style lug sole, padded ankle collar, metal D-ring lace eyelets, GORE-TEX style waterproof tag detail, placed on moss-covered rock with fern leaves, outdoor adventure meets fashion, warm natural lighting, gorpcore aesthetic, 8K",
-        "caption": "Lug Sole Hiking Boots\nラグソール ハイキングブーツ\n\nChunky lug sole. Waterproof. Trail to city.\n本格アウトドア仕様を街で履く。\nGorpcore at its finest.\n\n#fashion #ファッション #hikingboots #gorpcore #outdoor #ハイキングブーツ #アウトドア #ゴープコア #boots #トレンド",
-    },
-    # === アウター - ブランド風 ===
-    {
-        "prompt": "Luxury product photo of a black puffer jacket with matte nylon shell and all-over debossed monogram pattern, oversized fit, high funnel neck with hidden hood, two-way zip front, displayed on matte black mannequin torso against dark charcoal background, dramatic studio lighting catching the debossed texture, luxury streetwear brand campaign, 8K",
-        "caption": "Monogram Debossed Puffer\nモノグラム デボスドパファー\n\nAll-over debossed monogram on matte nylon.\n型押しモノグラムの贅沢ディテール。\nLuxury you can feel in the dark.\n\n#fashion #ファッション #puffer #monogram #luxury #パファー #モノグラム #アウター #hype #ストリート",
+        "prompt": "High-end product photo of split-toe tabi boots in black calfskin leather, distinctive divided toe design, cylindrical block heel, back zip closure, smooth leather with subtle natural creases, placed on polished dark wood surface with single dramatic spotlight from above, avant-garde Japanese fashion house aesthetic, 8K",
+        "caption": "Tabi Split-Toe Boots\nタビ スプリットトゥブーツ\n\nIconic split-toe silhouette. Calfskin leather. Block heel.\n足袋の伝統を現代ファッションに昇華。\nThe shoe that changed fashion.\n\n#fashion #ファッション #tabi #boots #splittoe #タビブーツ #足袋 #avantgarde #Japanese #モード",
     },
     {
-        "prompt": "High-end product photo of an oversized cream shearling-lined denim jacket with raw frayed edges, exposed shearling at collar lapels and cuffs, vintage brass button closures, heavy 14oz selvedge denim, hung on industrial pipe rack against exposed brick wall, warm golden lighting, premium denim brand aesthetic, 8K",
-        "caption": "Shearling Denim Jacket\nシアリング デニムジャケット\n\nShearling collar x raw selvedge denim. Rugged luxury.\nボア襟とセルビッジデニムの重厚感。\nWinter essential with attitude.\n\n#fashion #ファッション #denim #shearling #selvedge #ボアデニム #デニムジャケット #アウター #vintage #cool",
+        "prompt": "Stunning product photo of sock-style speed runner sneakers in all black knit upper that extends to mid-calf, seamless one-piece construction, bold white oversized logo text on outer side, chunky clear rubber sole with aggressive tread pattern, displayed on reflective black surface showing sole detail, luxury sportswear campaign lighting, 8K",
+        "caption": "Speed Knit Sock Runners\nスピードニット ソックランナー\n\nSeamless knit upper. Bold logo. Clear chunky sole.\nシームレスニットの未来的フォルム。\nSpeed has a new shape.\n\n#fashion #ファッション #sockrunner #speedtrainer #knit #ソックスニーカー #ニット #ランナー #luxury #hype",
     },
     {
-        "prompt": "Stunning product photo of a forest green waterproof windbreaker with reflective 3M tape accent strips, packable hood with toggle adjustment, half-zip pullover design with large kangaroo pocket, technical ripstop fabric, laid flat on dark surface showing reflective detail with flash photography effect, techwear outdoor brand campaign, 8K",
-        "caption": "3M Reflective Windbreaker\n3Mリフレクティブ ウィンドブレーカー\n\nReflective tape glows in the dark. Packable hood.\n暗闇で光るリフレクティブテープ。\nBe seen. Stay dry. Look good.\n\n#fashion #ファッション #windbreaker #reflective #techwear #ウィンドブレーカー #リフレクティブ #アウトドア #テックウェア #機能美",
+        "prompt": "Premium product photo of oversized chunky sole derby shoes in polished black leather with exaggerated 3-inch commando rubber lug sole, round toe, contrast yellow welt stitching, metal eyelet lacing, placed on rough hewn wooden block with dramatic side lighting showing sole thickness and leather shine, British luxury meets punk aesthetic, 8K",
+        "caption": "Mega Sole Derby Shoes\nメガソール ダービーシューズ\n\nPolished leather. 3-inch lug sole. Yellow welt.\n極厚ラグソールにイエローウェルトの存在感。\nClassic shoes, extreme soles.\n\n#fashion #ファッション #derby #lugsole #polished #ダービー #厚底 #ブリティッシュ #パンク #革靴",
     },
     {
-        "prompt": "Premium product photo of a camel wool-cashmere blend overcoat with peak lapel, double-breasted six button front, structured shoulders, full length reaching below knee, displayed on wooden coat stand in a marble-floored minimalist room, soft directional window light, Italian luxury tailoring aesthetic, fabric weave texture visible, 8K",
-        "caption": "Cashmere Blend Overcoat\nカシミヤブレンド オーバーコート\n\nWool-cashmere blend. Peak lapel. Italian craft.\nカシミヤ混の極上タッチ。\nThe coat that makes the outfit.\n\n#fashion #ファッション #overcoat #cashmere #camel #オーバーコート #カシミヤ #キャメル #quietluxury #上品",
+        "prompt": "Luxury product photo of minimalist white leather slide sandals with chunky padded quilted strap across the top, signature intrecciato-style woven leather texture on strap, molded rubber footbed, thick platform sole, displayed on white marble slab with soft shadow, warm clean studio lighting, Italian resort luxury aesthetic, macro detail showing weave pattern, 8K",
+        "caption": "Woven Leather Platform Slides\nウーブンレザー プラットフォームスライド\n\nIntrecciato weave strap. Padded quilted leather. Chunky sole.\n編み込みレザーのラグジュアリーサンダル。\nPool to dinner. Effortlessly.\n\n#fashion #ファッション #slides #woven #leather #スライド #サンダル #レザー #イタリア #quietluxury",
     },
-    # === アクセサリー - トレンド ===
+    # === アウター - ハイブランドインスパイア ===
     {
-        "prompt": "Luxury product photo of a crossbody mini bag in black quilted leather with gold chain strap and turn-lock closure, diamond quilting pattern with visible stitching, placed on white marble surface with gold jewelry scattered around, warm studio lighting catching the chain links, designer bag campaign aesthetic, macro detail, 8K",
-        "caption": "Quilted Chain Crossbody\nキルティング チェーンクロスボディ\n\nDiamond quilt. Gold chain. Turn-lock closure.\nゴールドチェーン×キルティングの高級感。\nSmall bag, big energy.\n\n#fashion #ファッション #crossbody #quilted #goldchain #キルティング #バッグ #チェーンバッグ #トレンド #お洒落さんと繋がりたい",
-    },
-    {
-        "prompt": "Premium product photo of a stainless steel chunky chain bracelet and matching Cuban link necklace set in silver finish, heavy substantial weight visible, displayed on dark slate stone surface with water droplets, dramatic close-up macro showing individual link detail and clasp mechanism, luxury jewelry campaign, 8K",
-        "caption": "Cuban Link Chain Set\nキューバンリンク チェーンセット\n\nHeavy stainless steel. Cuban link. Silver finish.\nずっしりとしたキューバンリンクの存在感。\nStack the wrist, drip the neck.\n\n#fashion #ファッション #cubanlink #chain #silver #キューバンリンク #チェーン #アクセサリー #jewelry #hype",
+        "prompt": "Luxury product photo of an oversized cocoon-shaped puffer jacket in matte black with exaggerated volume, high neck covering chin, no visible logo, minimalist design with hidden snap closure, premium matte nylon shell with ultra-lightweight down fill, displayed on faceless mannequin against pure white background, clean bright studio lighting emphasizing the sculptural silhouette, luxury outerwear campaign, 8K",
+        "caption": "Cocoon Sculpted Puffer\nコクーン スカルプテッドパファー\n\nExaggerated volume. No logo. Pure silhouette.\n究極のミニマル。ロゴなし、シルエットで語る。\nVolume is the new luxury.\n\n#fashion #ファッション #puffer #cocoon #minimalist #パファー #コクーン #ミニマル #シルエット #quietluxury",
     },
     {
-        "prompt": "Aesthetic product photo of rectangular sport sunglasses with shield lens in gradient smoke, wraparound frame in matte black with subtle logo on temple arm, displayed on reflective chrome surface, clean studio lighting showing lens gradient detail, Y2K sport eyewear revival trend, 8K",
-        "caption": "Shield Sport Sunglasses\nシールドスポーツサングラス\n\nWraparound shield lens. Y2K sport revival.\nY2Kリバイバルのシールドレンズ。\nThe future is retro.\n\n#fashion #ファッション #sunglasses #shield #Y2K #サングラス #スポーツ #Y2Kファッション #アクセサリー #トレンド",
+        "prompt": "High-end product photo of a black hybrid coat combining trench coat top with padded puffer bottom section, contrasting materials of gabardine and quilted nylon meeting at waist with visible zipper separation, belt at waist, oversized proportions, hung on sleek metal coat stand against dark grey backdrop, moody directional studio lighting, Japanese avant-garde hybrid fashion editorial, 8K",
+        "caption": "Hybrid Trench-Puffer Coat\nハイブリッド トレンチパファーコート\n\nTrench top. Puffer bottom. Two worlds merged.\nトレンチとパファーの異素材ハイブリッド。\nWhy choose when you can have both?\n\n#fashion #ファッション #hybrid #trench #puffer #ハイブリッド #トレンチ #パファー #avantgarde #Japanese",
     },
     {
-        "prompt": "Stunning product photo of a structured bucket hat in premium black nylon with embroidered logo on front panel, metal eyelet vents on sides, adjustable internal drawstring, placed on white pedestal with harsh top-down studio lighting creating dramatic shadow, streetwear accessory campaign, 8K",
-        "caption": "Nylon Bucket Hat\nナイロンバケットハット\n\nStructured nylon. Embroidered logo. Metal eyelets.\nメタルアイレットがアクセント。\nThe bucket hat that means business.\n\n#fashion #ファッション #buckethat #nylon #streetwear #バケハ #バケットハット #帽子 #ストリート #hype",
-    },
-    # === クセ強め - トップス ===
-    {
-        "prompt": "High-end product photo of a distressed acid wash denim shirt with bleach splatter effect, raw cut hem, oversized boxy fit, mismatched vintage-style buttons in brass and silver, heavy 12oz denim, laid flat on rusted metal surface, harsh overhead lighting creating strong contrast, punk-meets-luxury aesthetic, 8K",
-        "caption": "Acid Wash Bleach Denim Shirt\nアシッドウォッシュ ブリーチデニムシャツ\n\nBleach splatter. Raw hem. Mismatched buttons.\n漂白加工とミスマッチボタンの無骨さ。\nPerfectly imperfect.\n\n#fashion #ファッション #acidwash #denim #distressed #アシッドウォッシュ #デニムシャツ #グランジ #punk #トレンド",
+        "prompt": "Stunning product photo of a long black leather trench coat in supple calfskin, double-breasted with oversized horn buttons, wide pointed lapels, matching leather belt with silver hardware, full length reaching ankle, slight A-line silhouette, displayed on tall mannequin against industrial concrete wall, cinematic lighting creating long shadow, luxury leather goods campaign, 8K",
+        "caption": "Calfskin Leather Trench\nカーフスキン レザートレンチ\n\nFull-length calfskin. Horn buttons. Silver hardware.\nカーフスキンの贅沢ロングトレンチ。\nThe ultimate power coat.\n\n#fashion #ファッション #leathertrench #calfskin #luxury #レザートレンチ #カーフスキン #高級 #パワー #モード",
     },
     {
-        "prompt": "Luxury product photo of a black oversized half-zip fleece pullover with contrasting neon orange zipper and zipper pull tab, sherpa texture visible, boxy cropped length hitting at waist, embroidered coordinates text on back in white, displayed on industrial chain-link backdrop, harsh flash photography, techwear gorpcore brand aesthetic, 8K",
-        "caption": "Neon Zip Sherpa Pullover\nネオンジップ シェルパプルオーバー\n\nSherpa fleece x neon orange zip. Unexpected combo.\nネオンオレンジのジップがアクセント。\nOutdoor tech, city attitude.\n\n#fashion #ファッション #sherpa #fleece #neonzip #シェルパ #フリース #ゴープコア #techwear #クセ強",
+        "prompt": "Premium product photo of an oversized wool-blend bomber jacket in camel with contrast black ribbed collar, cuffs and hem, signature oblique jacquard pattern woven into the fabric visible at certain angles, two-way gold zipper, slash pockets with leather trim, displayed on wooden torso form against warm neutral backdrop, editorial golden hour lighting, French luxury house aesthetic, 8K",
+        "caption": "Oblique Jacquard Bomber\nオブリーク ジャカードボンバー\n\nHidden jacquard pattern. Wool-blend. Gold hardware.\n光の角度で浮かぶジャカード織り。\nSubtlety is the ultimate sophistication.\n\n#fashion #ファッション #bomber #jacquard #wool #ボンバー #ジャカード #キャメル #luxury #フレンチ",
     },
     {
-        "prompt": "Premium product photo of a cream oversized rugby polo shirt with bold navy and maroon horizontal stripes across chest, white rubber collar, embroidered crest patch, heavyweight cotton pique fabric, draped over vintage gymnasium pommel horse, warm nostalgic lighting, preppy sport revival aesthetic, 8K",
-        "caption": "Vintage Rugby Polo\nヴィンテージ ラグビーポロ\n\nBold stripes. Rubber collar. Old-school rugby energy.\nラバーカラーにボールドストライプ。\nPreppy with an edge.\n\n#fashion #ファッション #rugby #polo #preppy #ラグビーシャツ #ポロ #ヴィンテージ #スポーツMIX #クセ強",
+        "prompt": "Luxury product photo of a reversible padded vest in sage green quilted nylon on side A and compass-patch arm badge with black shell on side B, stand collar with chin guard, internal jersey lining visible at armhole, heavy duty double zip front, placed on outdoor wooden fence post with autumn forest background blurred, adventure meets luxury editorial lighting, 8K",
+        "caption": "Compass Badge Reversible Vest\nコンパスバッジ リバーシブルベスト\n\nReversible. Compass patch. Quilted nylon.\nコンパスバッジの機能美を2WAYで。\nOne vest, two identities.\n\n#fashion #ファッション #vest #reversible #compass #ベスト #リバーシブル #アウトドア #機能美 #luxury",
+    },
+    # === バッグ - ハイブランドインスパイア ===
+    {
+        "prompt": "Luxury product photo of a structured mini crossbody bag in black calfskin leather with signature woven intrecciato texture covering entire surface, gold-tone metal knot closure, adjustable thin leather shoulder strap, displayed on white marble pedestal with single warm spotlight from above creating soft shadow, Italian luxury leather goods campaign, extreme macro detail of weave visible, 8K",
+        "caption": "Intrecciato Mini Crossbody\nイントレチャート ミニクロスボディ\n\nHand-woven calfskin. Knot closure. Italian craft.\n職人の手編みが生む唯一無二のテクスチャー。\nThe bag that defines quiet luxury.\n\n#fashion #ファッション #intrecciato #crossbody #leather #イントレチャート #バッグ #レザー #職人技 #quietluxury",
     },
     {
-        "prompt": "Stunning product photo of an oversized black mesh football jersey with glossy vinyl number 99 in chrome silver on front and back, contrast white piping at shoulders, vented mesh side panels, displayed floating against pure black background with single spotlight from above, sports luxe editorial, 8K",
-        "caption": "Chrome 99 Mesh Jersey\nクローム99 メッシュジャージ\n\nVinyl chrome numbers on full mesh. Sports luxe.\n光沢クロームナンバーが主役。\nJersey culture, elevated.\n\n#fashion #ファッション #jersey #mesh #chrome #ジャージ #メッシュ #スポーツ #blokecore #hype",
+        "prompt": "High-end product photo of a black nylon backpack with reinforced triangular metal logo plate on front flap, padded adjustable straps, multiple compartments with smooth silver zippers, re-nylon recycled material with slight sheen, displayed against clean white background with dramatic side lighting showing the triangular plate catching light, Italian minimalist luxury accessory campaign, 8K",
+        "caption": "Triangle Logo Nylon Backpack\nトライアングルロゴ ナイロンバックパック\n\nTriangle plate. Re-nylon. Multiple compartments.\nトライアングルプレートのアイコニックな存在感。\nMinimal design, maximum impact.\n\n#fashion #ファッション #backpack #nylon #triangle #バックパック #ナイロン #ミニマル #luxury #イタリア",
     },
     {
-        "prompt": "High-end product photo of a washed olive military field jacket with hand-painted abstract art splashes in white and red across the back panel, distressed brass snap buttons, multiple flap pockets, faded cotton twill fabric, hung on rusty nail against raw plywood wall, gritty editorial lighting, art-meets-military fashion, 8K",
-        "caption": "Hand-Painted Military Jacket\nハンドペイント ミリタリージャケット\n\nHand-painted art on vintage military cotton.\n一点物のハンドペイントアート。\nWearable art with a military soul.\n\n#fashion #ファッション #military #handpainted #art #ミリタリー #ハンドペイント #一点物 #アート #クセ強",
-    },
-    # === クセ強め - ボトムス ===
-    {
-        "prompt": "Luxury product photo of reconstructed patchwork denim jeans made from multiple different wash shades of denim sewn together in irregular panels, exposed raw seams with orange contrast stitching, wide straight leg fit, laid flat on butcher paper surface, bright overhead studio lighting, avant-garde denim brand aesthetic, 8K",
-        "caption": "Patchwork Reconstructed Denim\nパッチワーク リコンストラクトデニム\n\nMultiple washes. Raw seams. One-of-a-kind panels.\n異なるウォッシュを再構築した唯一無二のデニム。\nDenim, deconstructed.\n\n#fashion #ファッション #patchwork #denim #reconstructed #パッチワーク #デニム #リメイク #アート #unique",
+        "prompt": "Stunning product photo of a large soft leather tote bag in smooth butter cream calfskin with no visible logos or hardware, magnetic closure hidden under the fold, unstructured slouchy shape that drapes naturally, clean unlined interior visible, placed casually on cream linen sofa in sunlit room, warm natural afternoon light, whisper-quiet luxury aesthetic, extreme leather texture detail, 8K",
+        "caption": "Unstructured Leather Tote\nアンストラクチャード レザートート\n\nNo logos. No hardware. Pure leather.\nロゴもハードウェアもない、究極の引き算。\nLuxury doesn't need to announce itself.\n\n#fashion #ファッション #tote #leather #nologo #トート #レザー #ノーロゴ #quietluxury #ミニマル",
     },
     {
-        "prompt": "Premium product photo of black technical jogger pants with detachable cargo pocket pouches connected by carabiner clips, adjustable velcro ankle straps, waterproof ripstop nylon fabric with taped seams visible, multiple d-ring attachment points, styled on metal grid surface with tactical accessories, techwear utility brand campaign, 8K",
-        "caption": "Modular Cargo Joggers\nモジュラーカーゴジョガー\n\nDetachable pouches. Carabiner clips. Full utility.\n着脱式ポーチとカラビナの機能美。\nCustomize your carry.\n\n#fashion #ファッション #techwear #modular #cargo #テックウェア #モジュラー #カーゴ #utility #機能美",
+        "prompt": "Premium product photo of a small structured saddle bag in cognac calfskin leather with large antique brass CD-style monogram buckle on front flap, adjustable canvas and leather shoulder strap with embroidered pattern, hand-stitched edges visible, placed on dark wood table with vintage books and dried flowers, warm romantic editorial lighting, French luxury heritage aesthetic, 8K",
+        "caption": "Monogram Buckle Saddle Bag\nモノグラムバックル サドルバッグ\n\nAntique brass buckle. Hand-stitched. Heritage canvas strap.\nアンティーク真鍮バックルの風格。\nHeritage reimagined.\n\n#fashion #ファッション #saddlebag #monogram #heritage #サドルバッグ #モノグラム #ヘリテージ #フレンチ #luxury",
+    },
+    # === アクセサリー - ハイブランドインスパイア ===
+    {
+        "prompt": "Luxury product photo of oversized cat-eye sunglasses in glossy black acetate with thick bold frame, gold metal interlocking logo detail on temple arms, gradient grey lenses, displayed on white marble with gold chain necklace and lipstick beside it, warm glamorous studio lighting, Italian luxury eyewear campaign, extreme detail on hinge mechanism visible, 8K",
+        "caption": "Bold Cat-Eye Sunglasses\nボールドキャットアイ サングラス\n\nOversized cat-eye. Gold temple detail. Gradient lens.\nゴールドロゴが輝くキャットアイフレーム。\nIconic frames. Iconic energy.\n\n#fashion #ファッション #cateye #sunglasses #bold #キャットアイ #サングラス #ゴールド #luxury #アイウェア",
     },
     {
-        "prompt": "Stunning product photo of cream corduroy flared pants with exaggerated wide flare from knee, high waist with oversized tortoiseshell belt buckle, thick 8-wale corduroy with visible texture ridges, hung on wooden pants hanger against terracotta wall, warm golden afternoon light, 70s revival fashion trend, 8K",
-        "caption": "Corduroy Mega Flares\nコーデュロイ メガフレア\n\nExaggerated flare. Thick corduroy. 70s reborn.\n膝下から大胆に広がるメガフレア。\nThe 70s are back, and louder.\n\n#fashion #ファッション #corduroy #flare #70s #コーデュロイ #フレアパンツ #レトロ #ヴィンテージ #クセ強",
-    },
-    # === クセ強め - シューズ ===
-    {
-        "prompt": "High-end sneaker product photo of deconstructed chunky trail runners with exposed foam midsole in neon green, translucent mesh upper showing internal structure, mismatched lace colors in orange and purple, aggressive lug outsole, placed on cracked earth surface with dramatic side lighting, experimental sneaker design campaign, 8K",
-        "caption": "Deconstructed Trail Runners\nデコンストラクト トレイルランナー\n\nExposed foam. Translucent mesh. Mismatched laces.\n内部構造が透けるトランスルーセントメッシュ。\nSneakers that break the rules.\n\n#fashion #ファッション #trailrunner #deconstructed #sneakers #トレイル #スニーカー #実験的 #デザイン #hype",
+        "prompt": "High-end product photo of a silk twill square scarf in vibrant orange and blue with intricate equestrian horse and carriage print, hand-rolled edges visible, displayed partially draped showing both the print detail and the silk texture catching light, placed on cream leather surface, warm studio lighting, French luxury heritage maison campaign, 8K",
+        "caption": "Equestrian Print Silk Scarf\nエケストリアンプリント シルクスカーフ\n\nHand-rolled silk twill. Equestrian motif. Heritage print.\n馬車モチーフの手巻きシルク。\nOne scarf, infinite ways to style.\n\n#fashion #ファッション #silkscarf #equestrian #heritage #シルクスカーフ #エケストリアン #フレンチ #luxury #上品",
     },
     {
-        "prompt": "Premium product photo of glossy black patent leather combat boots with chunky platform sole, silver metal toe cap detail, oversized silver buckle straps wrapping around ankle, yellow contrast welt stitching, placed on wet reflective black surface with water droplets, dramatic moody lighting, punk-luxury boot campaign, 8K",
-        "caption": "Platform Combat Boots\nプラットフォーム コンバットブーツ\n\nPatent leather. Metal toe cap. Buckle straps.\nメタルトゥキャップにバックルストラップ。\nHeavy boots, heavy statement.\n\n#fashion #ファッション #combatboots #platform #patent #コンバットブーツ #厚底 #パンク #boots #クセ強",
+        "prompt": "Stunning product photo of heavy sterling silver gothic cross pendant necklace on thick curb chain, cross decorated with floral scroll engravings and small garnet stones at each point, darkened oxidized patina on silver, displayed on black velvet cushion with dramatic single spotlight, luxury gothic jewelry campaign, extreme macro detail of engravings, 8K",
+        "caption": "Gothic Scroll Cross Pendant\nゴシックスクロール クロスペンダント\n\nSterling silver. Floral scroll. Garnet accents.\n彫刻とガーネットが輝くゴシッククロス。\nFaith, fashion, and edge.\n\n#fashion #ファッション #gothic #cross #silver #ゴシック #クロス #シルバー #ペンダント #jewelry",
     },
     {
-        "prompt": "Luxury sneaker photo of retro basketball mid-tops in sail white aged leather with vintage yellowed sole, perforated toe box, ankle strap with metal snap closure, distressed scuff marks intentionally applied, placed on aged newspaper pages, warm vintage film photography aesthetic, archive sneaker revival, 8K",
-        "caption": "Vintage Aged Basketball Mids\nヴィンテージエイジド バスケットミッド\n\nPre-aged leather. Yellowed sole. Worn-in character.\n経年変化を再現したエイジド加工。\nBorn vintage.\n\n#fashion #ファッション #vintage #basketball #aged #ヴィンテージ #バッシュ #エイジド #レトロ #archive",
-    },
-    # === クセ強め - アウター ===
-    {
-        "prompt": "Stunning product photo of an oversized black tactical vest with multiple molle webbing attachment points, padded shoulders, high collar with velcro name tape area, multiple zip and snap cargo pockets in different sizes, heavy duty YKK zippers, displayed on mannequin torso against urban concrete backdrop, harsh directional lighting, military tactical fashion campaign, 8K",
-        "caption": "Tactical MOLLE Vest\nタクティカル モールベスト\n\nMOLLE webbing. Multiple pockets. Mission ready.\nモールシステムで拡張自在。\nStreet tactical. No missions required.\n\n#fashion #ファッション #tactical #vest #molle #タクティカル #ベスト #ミリタリー #techwear #クセ強",
+        "prompt": "Premium product photo of a wide leather belt in glossy black patent leather with oversized ornate gold baroque-style double-letter logo buckle, belt width approximately 4cm, polished gold hardware throughout, displayed coiled on black glass surface with dramatic studio lighting catching the buckle reflection, Italian luxury accessories campaign, 8K",
+        "caption": "Baroque Logo Leather Belt\nバロックロゴ レザーベルト\n\nOversized baroque buckle. Patent leather. Gold hardware.\n大振りバロックバックルの圧倒的存在感。\nThe buckle that stops traffic.\n\n#fashion #ファッション #belt #baroque #logo #ベルト #バロック #ゴールド #パテント #luxury",
     },
     {
-        "prompt": "High-end product photo of a reversible bomber jacket, side A in black satin with embroidered Japanese souvenir jacket style tiger and dragon artwork in gold thread, side B in plain quilted olive nylon, displayed showing both sides simultaneously partially folded, dramatic studio lighting on dark background, sukajan revival fashion, 8K",
-        "caption": "Reversible Sukajan Bomber\nリバーシブル スカジャン\n\nEmbroidered tiger x dragon. Satin x quilted nylon.\n虎と龍の刺繍が圧巻のスカジャン。\nTwo jackets in one. Flip the script.\n\n#fashion #ファッション #sukajan #スカジャン #embroidered #bomber #刺繍 #リバーシブル #和柄 #hype",
+        "prompt": "Luxury product photo of a pair of black leather gloves in butter-soft lambskin with quilted diamond pattern on back of hand and smooth palm, cashmere lining visible at wrist opening, small gold logo snap button at wrist, displayed on dark grey slate surface with single red rose beside, moody romantic editorial lighting, French luxury accessories campaign, 8K",
+        "caption": "Quilted Lambskin Gloves\nキルティング ラムスキングローブ\n\nDiamond quilt. Cashmere lined. Lambskin leather.\nカシミヤライニングとラムスキンの贅沢。\nLuxury at your fingertips.\n\n#fashion #ファッション #gloves #quilted #lambskin #グローブ #キルティング #ラムスキン #カシミヤ #luxury",
+    },
+    # === ジュエリー - ハイブランドインスパイア ===
+    {
+        "prompt": "High-end product photo of a chunky gold-tone chain bracelet with large medusa-style medallion charm dangling from it, polished high-shine finish, heavy substantial weight visible, toggle clasp closure, displayed on black obsidian stone with water droplets, dramatic spotlight creating golden reflections, Italian luxury jewelry campaign, extreme macro detail, 8K",
+        "caption": "Medallion Chain Bracelet\nメダリオン チェーンブレスレット\n\nMedusa medallion. Chunky gold chain. Toggle clasp.\n重厚感あるメダリオンチェーン。\nPower on your wrist.\n\n#fashion #ファッション #medallion #bracelet #gold #メダリオン #ブレスレット #ゴールド #チェーン #luxury",
     },
     {
-        "prompt": "Premium product photo of a deconstructed trench coat in beige with asymmetric hem, one sleeve in original trench fabric and other sleeve in contrasting black nylon, exposed internal seam construction, raw edge details, oversized exaggerated collar, hung on minimalist metal rack against white gallery wall, avant-garde fashion editorial lighting, 8K",
-        "caption": "Deconstructed Asymmetric Trench\nデコンストラクト アシンメトリートレンチ\n\nMixed fabrics. Asymmetric hem. Exposed seams.\n左右非対称に再構築されたトレンチ。\nClassic, destroyed, rebuilt.\n\n#fashion #ファッション #deconstructed #trench #asymmetric #アシンメトリー #トレンチ #モード #avantgarde #クセ強",
-    },
-    # === クセ強め - アクセサリー ===
-    {
-        "prompt": "Luxury product photo of an oversized industrial chain necklace in brushed gunmetal finish with large padlock pendant, heavy linked chain with visible welding texture, displayed on raw concrete slab with metal shavings scattered around, dramatic harsh studio lighting, industrial punk jewelry campaign, macro detail, 8K",
-        "caption": "Padlock Chain Necklace\nパドロック チェーンネックレス\n\nGunmetal chain. Padlock pendant. Industrial weight.\nガンメタルの重厚チェーンに南京錠。\nLock it down.\n\n#fashion #ファッション #padlock #chain #industrial #南京錠 #チェーン #アクセサリー #パンク #クセ強",
+        "prompt": "Stunning product photo of minimalist gold vermeil ring set of three stackable thin bands, one plain polished, one with tiny pave-set cubic zirconia stones, one twisted rope texture, displayed on a small ceramic dish against soft pink backdrop, warm diffused studio lighting showing the sparkle of stones, Scandinavian minimalist jewelry aesthetic, 8K",
+        "caption": "Stackable Gold Ring Set\nスタッカブル ゴールドリングセット\n\nThree textures. Gold vermeil. Everyday elegance.\nポリッシュ、パヴェ、ロープの3テクスチャー。\nStack, mix, express yourself.\n\n#fashion #ファッション #rings #stackable #gold #リング #重ね付け #ゴールド #ミニマル #everyday",
     },
     {
-        "prompt": "Premium product photo of a crossbody chest rig bag in black cordura nylon with reflective piping, multiple front zip compartments, adjustable quick-release buckle straps, molle-style webbing on sides, displayed on dark surface with tactical accessories around it, flash photography showing reflective detail, urban utility accessory campaign, 8K",
-        "caption": "Tactical Chest Rig Bag\nタクティカル チェストリグバッグ\n\nCordura nylon. Quick-release buckle. Reflective piping.\nクイックリリースバックルで着脱簡単。\nHands free, style on lock.\n\n#fashion #ファッション #chestrig #tactical #cordura #チェストバッグ #タクティカル #utility #テックウェア #hype",
-    },
-    {
-        "prompt": "Stunning product photo of oversized wraparound visor sunglasses with gradient mirror lens shifting from blue to purple, futuristic one-piece shield design, thin titanium arms, displayed on chrome mannequin head against pure white background, clean studio lighting showing lens color shift, futuristic eyewear campaign, 8K",
-        "caption": "Mirror Shield Visor\nミラーシールド バイザー\n\nGradient mirror lens. Blue to purple shift.\nブルーからパープルに変化するミラーレンズ。\nFuture-proof eyewear.\n\n#fashion #ファッション #visor #mirror #futuristic #バイザー #ミラーレンズ #サングラス #未来 #クセ強",
+        "prompt": "Premium product photo of oversized hoop earrings in brushed gold with subtle hammered texture, 5cm diameter, lightweight hollow construction, displayed hanging from thin gold rod against deep navy velvet background, warm golden studio lighting catching the hammered texture details, luxury artisan jewelry campaign, 8K",
+        "caption": "Hammered Gold Hoops\nハンマード ゴールドフープ\n\nOversized 5cm hoops. Hammered texture. Brushed gold.\nハンマー加工のゴールドフープイヤリング。\nThe earrings that frame your face.\n\n#fashion #ファッション #hoops #gold #hammered #フープ #ゴールド #イヤリング #artisan #luxury",
     },
 ]
 

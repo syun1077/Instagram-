@@ -1,0 +1,5 @@
+.env
+token_info.json
+temp_image.jpg
+__pycache__/
+*.pyc

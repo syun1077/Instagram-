@@ -22,8 +22,10 @@ def generate_ai_image(
     height: int = DEFAULT_HEIGHT,
     style_suffix: str = (
         "masterpiece, best quality, ultra high resolution, 8K UHD, "
-        "extremely detailed, photorealistic, professional photography, "
-        "sharp focus, HDR, award winning photo"
+        "extremely detailed, photorealistic, professional studio photography, "
+        "sharp focus, HDR, shot on Hasselblad H6D-400c, 100mm lens, "
+        "color graded, high contrast, fabric texture clearly visible, "
+        "luxury brand campaign quality, Vogue magazine editorial"
     ),
 ) -> str:
     """

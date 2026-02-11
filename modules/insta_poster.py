@@ -121,6 +121,72 @@ def publish_media(creation_id: str) -> str:
     return post_id
 
 
+def create_carousel_item(image_url: str) -> str:
+    """カルーセル用の子メディアコンテナを作成する。"""
+    access_token, account_id = _get_credentials()
+    url = f"{GRAPH_API_BASE}/{account_id}/media"
+    params = {
+        "image_url": image_url,
+        "is_carousel_item": "true",
+        "access_token": access_token,
+    }
+    response = requests.post(url, params=params, timeout=60)
+    data = response.json()
+    if "error" in data:
+        raise RuntimeError(f"カルーセル子コンテナ作成エラー: {data['error'].get('message')}")
+    return data["id"]
+
+
+def create_carousel_container(children_ids: list[str], caption: str) -> str:
+    """カルーセル親コンテナを作成する。"""
+    access_token, account_id = _get_credentials()
+    url = f"{GRAPH_API_BASE}/{account_id}/media"
+    params = {
+        "media_type": "CAROUSEL",
+        "children": ",".join(children_ids),
+        "caption": caption,
+        "access_token": access_token,
+    }
+    response = requests.post(url, params=params, timeout=60)
+    data = response.json()
+    if "error" in data:
+        raise RuntimeError(f"カルーセル親コンテナ作成エラー: {data['error'].get('message')}")
+    return data["id"]
+
+
+def post_carousel_to_instagram(
+    image_urls: list[str], caption: str, max_retries: int = 3
+) -> str:
+    """複数画像をカルーセル投稿する。"""
+    print(f"[Instagram] カルーセル投稿 ({len(image_urls)}枚)...")
+
+    # 子コンテナを作成
+    children_ids = []
+    for i, url in enumerate(image_urls):
+        print(f"[Instagram] 子コンテナ作成中... ({i+1}/{len(image_urls)})")
+        child_id = create_carousel_item(url)
+        children_ids.append(child_id)
+
+    # 親コンテナを作成
+    print("[Instagram] カルーセルコンテナ作成中...")
+    creation_id = create_carousel_container(children_ids, caption)
+
+    # 公開（リトライ付き）
+    for attempt in range(1, max_retries + 1):
+        try:
+            wait_sec = 5 * attempt
+            print(f"[Instagram] コンテナ処理待機中... ({wait_sec}秒)")
+            time.sleep(wait_sec)
+            return publish_media(creation_id)
+        except RuntimeError as e:
+            if "not ready" in str(e).lower() and attempt < max_retries:
+                print(f"[Instagram] リトライ {attempt}/{max_retries}...")
+                continue
+            raise
+
+    raise RuntimeError("カルーセル投稿の公開に失敗しました。")
+
+
 def post_to_instagram(image_url: str, caption: str, max_retries: int = 3) -> str:
     """
     画像URLとキャプションでInstagramに投稿する（リトライ機能付き）。

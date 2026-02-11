@@ -23,7 +23,7 @@ logging.basicConfig(
 from modules.token_manager import auto_refresh
 from modules.ai_image_generator import generate_ai_image
 from modules.uploader import upload_image
-from modules.insta_poster import post_to_instagram
+from modules.insta_poster import post_to_instagram, post_carousel_to_instagram
 
 # --- 投稿履歴管理（重複防止） ---
 HISTORY_PATH = os.path.join(os.path.dirname(__file__), "post_history.json")
@@ -236,6 +236,38 @@ POSTS = [
     },
 ]
 
+# --- CTA（コールトゥアクション）テンプレート ---
+CTAS = [
+    "\n\n💾 Save this for your next outfit inspo!\nこのコーデ保存しておいて！",
+    "\n\n🔥 Would you rock this? Comment below!\nこれ着る？コメントで教えて！",
+    "\n\n👆 Double tap if this is your style!\nいいねで教えて、あなたのスタイル！",
+    "\n\n📲 Share with someone who'd love this!\n好きそうな友達にシェアしてね！",
+    "\n\n💬 Rate this 1-10 in the comments!\n10点満点で何点？コメントしてね！",
+    "\n\n🛒 Link in bio for similar items!\nプロフィールのリンクから類似アイテムをチェック！",
+    "\n\n👀 Follow for daily fashion drops!\nフォローして毎日の新作をチェック！",
+    "\n\n🔖 Bookmark this for later!\nあとで見返せるように保存しておこう！",
+]
+
+# --- アフィリエイトリンク誘導テンプレート ---
+AFFILIATE_CTA = (
+    "\n\n🔗 Similar items → Link in bio!"
+    "\n似たアイテムはプロフィールのリンクから🛒"
+)
+
+
+def add_cta(caption: str) -> str:
+    """キャプションの末尾にランダムCTA + アフィリエイト誘導を追加する。"""
+    cta = random.choice(CTAS)
+    return caption + cta + AFFILIATE_CTA
+
+
+# --- カルーセル用アングルバリエーション ---
+ANGLE_SUFFIXES = [
+    ", close-up macro detail shot showing fabric texture and stitching, 8K",
+    ", styled overhead flat lay with complementary accessories around it, lifestyle photography, 8K",
+    ", side angle view showing silhouette and proportions, clean white background, lookbook style, 8K",
+]
+
 
 def auto_post():
     """完全自動で1投稿を行う。"""
@@ -254,23 +286,33 @@ def auto_post():
         # Step 1: 未投稿のアイテムを選択（重複防止）
         idx, post = pick_unused_post(POSTS)
         prompt = post["prompt"]
-        caption = post["caption"]
+        caption = add_cta(post["caption"])
         logging.info(f"プロンプト: {prompt}")
         logging.info(f"キャプション: {caption[:50]}...")
 
-        # Step 2: AI画像生成
-        logging.info("AI画像を生成中...")
-        generate_ai_image(prompt, temp_image)
-        logging.info("画像生成完了")
+        # Step 2: AI画像生成（メイン + アングル違い2枚 = 計3枚）
+        image_urls = []
 
-        # Step 3: 画像アップロード
-        logging.info("画像をアップロード中...")
+        # メイン画像
+        logging.info("AI画像を生成中... (1/3 メイン)")
+        generate_ai_image(prompt, temp_image)
+        logging.info("メイン画像生成完了")
         image_url = upload_image(temp_image)
+        image_urls.append(image_url)
         logging.info(f"アップロード完了: {image_url}")
 
-        # Step 4: Instagram投稿
-        logging.info("Instagramに投稿中...")
-        post_id = post_to_instagram(image_url, caption)
+        # アングル違い画像 2枚
+        for i, suffix in enumerate(random.sample(ANGLE_SUFFIXES, 2)):
+            angle_prompt = prompt.rsplit(", 8K", 1)[0] + suffix
+            logging.info(f"AI画像を生成中... ({i+2}/3 アングル)")
+            generate_ai_image(angle_prompt, temp_image)
+            url = upload_image(temp_image)
+            image_urls.append(url)
+            logging.info(f"アップロード完了: {url}")
+
+        # Step 3: カルーセル投稿
+        logging.info(f"Instagramにカルーセル投稿中... ({len(image_urls)}枚)")
+        post_id = post_carousel_to_instagram(image_urls, caption)
         logging.info(f"投稿完了! Post ID: {post_id}")
 
         return True

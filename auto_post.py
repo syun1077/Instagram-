@@ -21,9 +21,15 @@ logging.basicConfig(
 )
 
 from modules.token_manager import auto_refresh
-from modules.ai_image_generator import generate_ai_image
-from modules.uploader import upload_image
-from modules.insta_poster import post_to_instagram, post_carousel_to_instagram
+from modules.ai_image_generator import generate_ai_image, generate_reel_images, generate_slideshow_video
+from modules.uploader import upload_image, upload_video
+from modules.insta_poster import (
+    post_to_instagram,
+    post_carousel_to_instagram,
+    post_reel_to_instagram,
+    post_story_to_instagram,
+)
+from modules.hashtags import replace_hashtags
 
 # 楽天API（実商品投稿用）
 try:
@@ -31,6 +37,21 @@ try:
     RAKUTEN_AVAILABLE = True
 except Exception:
     RAKUTEN_AVAILABLE = False
+
+# 投稿分析モジュール
+from modules.analytics import analyze_posts
+
+# Amazon API（アフィリエイト連携）
+try:
+    from modules.amazon_api import (
+        pick_random_product as amazon_pick_product,
+        generate_caption as amazon_caption,
+        generate_affiliate_link,
+        _is_available as amazon_is_available,
+    )
+    AMAZON_AVAILABLE = amazon_is_available()
+except Exception:
+    AMAZON_AVAILABLE = False
 
 # --- 投稿履歴管理（重複防止） ---
 HISTORY_PATH = os.path.join(os.path.dirname(__file__), "post_history.json")
@@ -239,10 +260,21 @@ AFFILIATE_CTA = (
 )
 
 
-def add_cta(caption: str) -> str:
-    """キャプションの末尾にランダムCTA + アフィリエイト誘導を追加する。"""
+def add_cta(caption: str, category: str = "") -> str:
+    """キャプションのハッシュタグ最適化 + CTA + アフィリエイト誘導を追加する。"""
+    optimized = replace_hashtags(caption, category)
     cta = random.choice(CTAS)
-    return caption + cta + AFFILIATE_CTA
+    return optimized + cta + AFFILIATE_CTA
+
+
+def auto_story(image_url: str) -> None:
+    """投稿と同じ画像をストーリーにもシェアする（失敗してもメイン投稿に影響しない）。"""
+    try:
+        logging.info("[ストーリー] 自動ストーリー投稿中...")
+        story_id = post_story_to_instagram(image_url)
+        logging.info(f"[ストーリー] 完了! Story ID: {story_id}")
+    except Exception as e:
+        logging.warning(f"[ストーリー] 失敗（メイン投稿は成功）: {e}")
 
 
 # --- カルーセル用アングルバリエーション ---
@@ -280,11 +312,74 @@ def post_ai_image():
         # カルーセル投稿
         post_id = post_carousel_to_instagram(image_urls, caption)
         logging.info(f"[AI投稿] 完了! Post ID: {post_id}")
+
+        # ストーリーにもシェア（メイン画像を使用）
+        auto_story(image_urls[0])
         return True
 
     finally:
         if os.path.exists(temp_image):
             os.remove(temp_image)
+
+
+def post_ai_reel():
+    """AI生成画像からスライドショー動画を作成してリール投稿する。"""
+    base_dir = os.path.dirname(__file__)
+    temp_video = os.path.join(base_dir, "temp_reel.mp4")
+    reel_images = []
+
+    try:
+        idx, post = pick_unused_post(POSTS)
+        prompt = post["prompt"]
+        caption = add_cta(post["caption"])
+        logging.info(f"[リール投稿] プロンプト: {prompt[:80]}...")
+
+        # リール用縦長画像を4枚生成
+        reel_images = generate_reel_images(prompt, output_dir=base_dir, num_images=4)
+
+        # スライドショー動画生成（各3秒 = 合計12秒）
+        generate_slideshow_video(reel_images, temp_video, duration_per_image=3.0)
+
+        # 動画アップロード
+        video_url = upload_video(temp_video)
+
+        # カバー画像（1枚目を使用）
+        cover_url = upload_image(reel_images[0])
+
+        # リール投稿
+        post_id = post_reel_to_instagram(video_url, caption, cover_url=cover_url)
+        logging.info(f"[リール投稿] 完了! Post ID: {post_id}")
+
+        # ストーリーにもカバー画像をシェア
+        auto_story(cover_url)
+        return True
+
+    finally:
+        # 一時ファイル削除
+        if os.path.exists(temp_video):
+            os.remove(temp_video)
+        for img in reel_images:
+            if os.path.exists(img):
+                os.remove(img)
+
+
+def post_amazon_product():
+    """Amazon商品を取得して投稿する。"""
+    product = amazon_pick_product()
+    if not product:
+        logging.warning("[Amazon] 商品が見つからず、楽天にフォールバック")
+        return post_real_product()
+
+    caption = add_cta(amazon_caption(product), category="product")
+    logging.info(f"[Amazon] {product['name'][:50]}...")
+
+    image_url = product["image_url"]
+    post_id = post_to_instagram(image_url, caption)
+    logging.info(f"[Amazon] 完了! Post ID: {post_id}")
+
+    # ストーリーにもシェア
+    auto_story(image_url)
+    return True
 
 
 def post_real_product():
@@ -294,7 +389,7 @@ def post_real_product():
         logging.warning("[実商品] 商品が見つからず、AI投稿にフォールバック")
         return post_ai_image()
 
-    caption = add_cta(rakuten_caption(product))
+    caption = add_cta(rakuten_caption(product), category="product")
     logging.info(f"[実商品] {product['name'][:50]}...")
     logging.info(f"[実商品] ¥{product['price']:,}")
 
@@ -308,6 +403,9 @@ def post_real_product():
         post_id = post_carousel_to_instagram(image_urls, caption)
 
     logging.info(f"[実商品] 完了! Post ID: {post_id}")
+
+    # ストーリーにもシェア（1枚目の画像を使用）
+    auto_story(image_urls[0] if isinstance(image_urls, list) else product["image_url"])
     return True
 
 
@@ -316,15 +414,21 @@ MODE_PATH = os.path.join(os.path.dirname(__file__), "post_mode.json")
 
 
 def get_next_mode() -> str:
-    """次の投稿モードを取得する（ai / product を交互に）。"""
+    """次の投稿モードを取得する（ai → product → reel のローテーション）。"""
+    MODE_ROTATION = ["ai", "product", "reel", "amazon"] if AMAZON_AVAILABLE else ["ai", "product", "reel"]
+
     if os.path.exists(MODE_PATH):
         with open(MODE_PATH, "r") as f:
             data = json.load(f)
-            last_mode = data.get("last_mode", "product")
+            last_mode = data.get("last_mode", "reel")
     else:
-        last_mode = "product"
+        last_mode = "reel"
 
-    next_mode = "product" if last_mode == "ai" else "ai"
+    try:
+        current_idx = MODE_ROTATION.index(last_mode)
+        next_mode = MODE_ROTATION[(current_idx + 1) % len(MODE_ROTATION)]
+    except ValueError:
+        next_mode = "ai"
 
     with open(MODE_PATH, "w") as f:
         json.dump({"last_mode": next_mode}, f)
@@ -333,7 +437,7 @@ def get_next_mode() -> str:
 
 
 def auto_post():
-    """完全自動で1投稿を行う（AI画像と実商品を交互に）。"""
+    """完全自動で1投稿を行う（AI画像 → 実商品 → リールのローテーション）。"""
     logging.info("=" * 40)
     logging.info("自動投稿を開始します")
 
@@ -344,19 +448,43 @@ def auto_post():
             logging.error("トークンが無効です。python get_token.py を実行してください。")
             return False
 
-        # Step 1: 投稿モード決定（楽天API使えなければ常にAI）
+        # Step 1: 投稿モード決定
         if RAKUTEN_AVAILABLE:
             mode = get_next_mode()
         else:
-            mode = "ai"
+            # 楽天API使えなければ ai と reel を交互に
+            if os.path.exists(MODE_PATH):
+                with open(MODE_PATH, "r") as f:
+                    last = json.load(f).get("last_mode", "reel")
+                mode = "reel" if last == "ai" else "ai"
+            else:
+                mode = "ai"
+            with open(MODE_PATH, "w") as f:
+                json.dump({"last_mode": mode}, f)
 
         logging.info(f"投稿モード: {mode}")
 
         # Step 2: 投稿実行
         if mode == "product":
-            return post_real_product()
+            result = post_real_product()
+        elif mode == "reel":
+            result = post_ai_reel()
+        elif mode == "amazon":
+            result = post_amazon_product()
         else:
-            return post_ai_image()
+            result = post_ai_image()
+
+        # Step 3: 投稿分析（5投稿ごとに実行）
+        if result:
+            try:
+                history = load_history()
+                if len(history) % 5 == 0:
+                    logging.info("[分析] 定期分析を実行中...")
+                    analyze_posts()
+            except Exception as e:
+                logging.warning(f"[分析] 分析エラー（投稿は成功）: {e}")
+
+        return result
 
     except Exception as e:
         logging.error(f"エラー発生: {e}")

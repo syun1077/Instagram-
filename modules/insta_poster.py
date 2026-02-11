@@ -187,6 +187,137 @@ def post_carousel_to_instagram(
     raise RuntimeError("カルーセル投稿の公開に失敗しました。")
 
 
+def create_reel_container(video_url: str, caption: str, cover_url: str = "") -> str:
+    """リール用メディアコンテナを作成する。"""
+    access_token, account_id = _get_credentials()
+    url = f"{GRAPH_API_BASE}/{account_id}/media"
+    params = {
+        "media_type": "REELS",
+        "video_url": video_url,
+        "caption": caption,
+        "access_token": access_token,
+        "share_to_feed": "true",
+    }
+    if cover_url:
+        params["cover_url"] = cover_url
+    response = requests.post(url, params=params, timeout=120)
+    data = response.json()
+    if "error" in data:
+        raise RuntimeError(f"リールコンテナ作成エラー: {data['error'].get('message')}")
+    return data["id"]
+
+
+def check_container_status(creation_id: str) -> str:
+    """コンテナの処理状態を確認する。"""
+    access_token, _ = _get_credentials()
+    url = f"{GRAPH_API_BASE}/{creation_id}"
+    params = {
+        "fields": "status_code",
+        "access_token": access_token,
+    }
+    response = requests.get(url, params=params, timeout=30)
+    data = response.json()
+    return data.get("status_code", "UNKNOWN")
+
+
+def post_reel_to_instagram(
+    video_url: str, caption: str, cover_url: str = "", max_retries: int = 10
+) -> str:
+    """リール動画をInstagramに投稿する（動画処理待ち付き）。"""
+    print(f"[Instagram] リール投稿中...")
+    creation_id = create_reel_container(video_url, caption, cover_url)
+
+    # 動画は処理に時間がかかるため、ステータスチェックしながら待機
+    for attempt in range(1, max_retries + 1):
+        wait_sec = 15  # 動画は15秒間隔でチェック
+        print(f"[Instagram] 動画処理待機中... ({attempt}/{max_retries}, {wait_sec}秒)")
+        time.sleep(wait_sec)
+
+        status = check_container_status(creation_id)
+        print(f"[Instagram] ステータス: {status}")
+
+        if status == "FINISHED":
+            return publish_media(creation_id)
+        elif status == "ERROR":
+            raise RuntimeError("リール動画の処理に失敗しました。")
+        # IN_PROGRESS or other → continue waiting
+
+    raise RuntimeError("リール動画の処理がタイムアウトしました。")
+
+
+def create_story_container(image_url: str) -> str:
+    """ストーリー用メディアコンテナを作成する。"""
+    access_token, account_id = _get_credentials()
+    url = f"{GRAPH_API_BASE}/{account_id}/media"
+    params = {
+        "media_type": "STORIES",
+        "image_url": image_url,
+        "access_token": access_token,
+    }
+    response = requests.post(url, params=params, timeout=60)
+    data = response.json()
+    if "error" in data:
+        raise RuntimeError(f"ストーリーコンテナ作成エラー: {data['error'].get('message')}")
+    return data["id"]
+
+
+def create_story_video_container(video_url: str) -> str:
+    """ストーリー用動画コンテナを作成する。"""
+    access_token, account_id = _get_credentials()
+    url = f"{GRAPH_API_BASE}/{account_id}/media"
+    params = {
+        "media_type": "STORIES",
+        "video_url": video_url,
+        "access_token": access_token,
+    }
+    response = requests.post(url, params=params, timeout=120)
+    data = response.json()
+    if "error" in data:
+        raise RuntimeError(f"ストーリー動画コンテナ作成エラー: {data['error'].get('message')}")
+    return data["id"]
+
+
+def post_story_to_instagram(image_url: str, max_retries: int = 3) -> str:
+    """画像をストーリーに投稿する。"""
+    print("[Instagram] ストーリー投稿中...")
+    creation_id = create_story_container(image_url)
+
+    for attempt in range(1, max_retries + 1):
+        try:
+            wait_sec = 5 * attempt
+            print(f"[Instagram] ストーリー処理待機中... ({wait_sec}秒)")
+            time.sleep(wait_sec)
+            return publish_media(creation_id)
+        except RuntimeError as e:
+            if "not ready" in str(e).lower() and attempt < max_retries:
+                print(f"[Instagram] リトライ {attempt}/{max_retries}...")
+                continue
+            raise
+
+    raise RuntimeError("ストーリー投稿に失敗しました。")
+
+
+def post_story_video_to_instagram(video_url: str, max_retries: int = 10) -> str:
+    """動画をストーリーに投稿する。"""
+    print("[Instagram] ストーリー動画投稿中...")
+    creation_id = create_story_video_container(video_url)
+
+    for attempt in range(1, max_retries + 1):
+        wait_sec = 15
+        print(f"[Instagram] ストーリー動画処理待機中... ({attempt}/{max_retries}, {wait_sec}秒)")
+        time.sleep(wait_sec)
+
+        status = check_container_status(creation_id)
+        print(f"[Instagram] ステータス: {status}")
+
+        if status == "FINISHED":
+            return publish_media(creation_id)
+        elif status == "ERROR":
+            raise RuntimeError("ストーリー動画の処理に失敗しました。")
+
+    raise RuntimeError("ストーリー動画の処理がタイムアウトしました。")
+
+
 def post_to_instagram(image_url: str, caption: str, max_retries: int = 3) -> str:
     """
     画像URLとキャプションでInstagramに投稿する（リトライ機能付き）。

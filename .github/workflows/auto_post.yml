@@ -21,6 +21,9 @@ jobs:
         with:
           python-version: '3.12'
 
+      - name: Install ffmpeg
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+
       - name: Install dependencies
         run: pip install -r requirements.txt
 
@@ -31,6 +34,9 @@ jobs:
           echo "RAKUTEN_APP_ID=${{ secrets.RAKUTEN_APP_ID }}" >> .env
           echo "RAKUTEN_ACCESS_KEY=${{ secrets.RAKUTEN_ACCESS_KEY }}" >> .env
           echo "RAKUTEN_AFFILIATE_ID=${{ secrets.RAKUTEN_AFFILIATE_ID }}" >> .env
+          echo "AMAZON_ACCESS_KEY=${{ secrets.AMAZON_ACCESS_KEY }}" >> .env
+          echo "AMAZON_SECRET_KEY=${{ secrets.AMAZON_SECRET_KEY }}" >> .env
+          echo "AMAZON_PARTNER_TAG=${{ secrets.AMAZON_PARTNER_TAG }}" >> .env
 
       - name: Create token_info.json
         run: |
@@ -49,7 +55,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add post_history.json post_mode.json || true
+          git add post_history.json post_mode.json analytics_data.json || true
           git diff --cached --quiet || git commit -m "Update post history [skip ci]"
           git push || true
 

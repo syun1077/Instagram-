@@ -12,18 +12,19 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-RAKUTEN_API_URL = "https://app.rakuten.co.jp/services/api/IchibaItem/Search/20220601"
+RAKUTEN_API_URL = "https://openapi.rakuten.co.jp/ichibams/api/IchibaItem/Search/20220601"
 
 
-def _get_api_key() -> str:
-    """楽天APIキーを取得する。"""
-    key = os.getenv("RAKUTEN_APP_ID")
-    if not key:
+def _get_credentials() -> tuple[str, str]:
+    """楽天API認証情報を取得する。"""
+    app_id = os.getenv("RAKUTEN_APP_ID")
+    access_key = os.getenv("RAKUTEN_ACCESS_KEY", "")
+    if not app_id:
         raise ValueError(
             "RAKUTEN_APP_ID が .env に設定されていません。\n"
             "https://webservice.rakuten.co.jp/ で無料取得できます。"
         )
-    return key
+    return app_id, access_key
 
 
 def search_products(
@@ -48,7 +49,7 @@ def search_products(
     Returns:
         商品情報のリスト
     """
-    app_id = _get_api_key()
+    app_id, access_key = _get_credentials()
     affiliate_id = os.getenv("RAKUTEN_AFFILIATE_ID", "")
 
     params = {
@@ -60,6 +61,8 @@ def search_products(
         "format": "json",
     }
 
+    if access_key:
+        params["accessKey"] = access_key
     if affiliate_id:
         params["affiliateId"] = affiliate_id
     if genre_id:
@@ -69,11 +72,18 @@ def search_products(
     if max_price > 0:
         params["maxPrice"] = max_price
 
-    response = requests.get(RAKUTEN_API_URL, params=params, timeout=30)
+    headers = {
+        "Origin": "https://github.com",
+        "Referer": "https://github.com/",
+    }
+
+    response = requests.get(RAKUTEN_API_URL, params=params, headers=headers, timeout=30)
     data = response.json()
 
     if "error" in data:
         raise RuntimeError(f"楽天API エラー: {data['error']}")
+    if "errors" in data:
+        raise RuntimeError(f"楽天API エラー: {data['errors']}")
 
     items = data.get("Items", [])
     results = []
@@ -166,8 +176,8 @@ def pick_random_product() -> dict | None:
     product["search_keyword"] = search["keyword"]
 
     print(f"[楽天API] 選択: {product['name'][:50]}...")
-    print(f"[楽天API] 価格: ¥{product['price']:,}")
-    print(f"[楽天API] レビュー: {product['review_avg']}★ ({product['review_count']}件)")
+    print(f"[楽天API] 価格: {product['price']:,}円")
+    print(f"[楽天API] レビュー: {product['review_avg']}/5.0 ({product['review_count']}件)")
 
     return product
 

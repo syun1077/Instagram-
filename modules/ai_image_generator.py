@@ -11,8 +11,8 @@ import os
 
 # Pollinations.ai 設定
 POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
-DEFAULT_WIDTH = 1440
-DEFAULT_HEIGHT = 1440
+DEFAULT_WIDTH = 1080
+DEFAULT_HEIGHT = 1080
 
 
 def generate_ai_image(
@@ -21,11 +21,8 @@ def generate_ai_image(
     width: int = DEFAULT_WIDTH,
     height: int = DEFAULT_HEIGHT,
     style_suffix: str = (
-        "masterpiece, best quality, ultra high resolution, 8K UHD, "
-        "extremely detailed, photorealistic, professional studio photography, "
-        "sharp focus, HDR, shot on Hasselblad H6D-400c, 100mm lens, "
-        "color graded, high contrast, fabric texture clearly visible, "
-        "luxury brand campaign quality, Vogue magazine editorial"
+        "photorealistic, professional product photography, "
+        "sharp focus, studio lighting, high detail, no blur, no artifacts"
     ),
 ) -> str:
     """
@@ -49,12 +46,14 @@ def generate_ai_image(
     encoded_prompt = urllib.parse.quote(full_prompt)
 
     url = POLLINATIONS_URL.format(prompt=encoded_prompt)
+    import time
     params = {
         "width": width,
         "height": height,
         "nologo": "true",
         "enhance": "true",
         "model": "flux",
+        "seed": int(time.time() * 1000) % 2147483647,
     }
 
     print(f"[AI画像生成] プロンプト: {prompt}")

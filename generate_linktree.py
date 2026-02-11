@@ -12,16 +12,18 @@ AMAZON_ASSOCIATE_TAG = ""  # 例: "your-tag-20"
 
 # --- おすすめアイテムキーワード ---
 ITEMS = [
-    {"name": "Oversized Hoodie / オーバーサイズパーカー", "keywords": "オーバーサイズ パーカー メンズ"},
-    {"name": "Track Jacket / トラックジャケット", "keywords": "トラックジャケット レトロ"},
-    {"name": "Varsity Jacket / バーシティジャケット", "keywords": "スタジャン バーシティ"},
-    {"name": "Cargo Pants / カーゴパンツ", "keywords": "カーゴパンツ ワイド メンズ"},
-    {"name": "Parachute Pants / パラシュートパンツ", "keywords": "パラシュートパンツ"},
-    {"name": "Retro Sneakers / レトロスニーカー", "keywords": "レトロ スニーカー ガムソール"},
-    {"name": "Combat Boots / コンバットブーツ", "keywords": "厚底 コンバットブーツ"},
-    {"name": "Chain Necklace / チェーンネックレス", "keywords": "キューバンリンク チェーン ネックレス"},
-    {"name": "Chest Rig Bag / チェストバッグ", "keywords": "チェストバッグ タクティカル"},
-    {"name": "Bucket Hat / バケットハット", "keywords": "バケットハット ストリート"},
+    {"name": "Oversized Hoodie / オーバーサイズパーカー", "keywords": "オーバーサイズ パーカー メンズ 韓国"},
+    {"name": "Deconstructed Blazer / デコンストラクトブレザー", "keywords": "モード ブレザー メンズ オーバーサイズ"},
+    {"name": "Leather Trench / レザートレンチコート", "keywords": "レザー トレンチコート メンズ"},
+    {"name": "Wide-Leg Denim / ワイドデニム", "keywords": "ワイドパンツ デニム メンズ"},
+    {"name": "Technical Cargo / テクニカルカーゴ", "keywords": "テックウェア カーゴパンツ メンズ"},
+    {"name": "Platform Sneakers / 厚底スニーカー", "keywords": "厚底 スニーカー メンズ 韓国"},
+    {"name": "Tabi Boots / タビブーツ", "keywords": "足袋ブーツ メンズ"},
+    {"name": "Woven Leather Bag / 編み込みレザーバッグ", "keywords": "イントレチャート バッグ レザー"},
+    {"name": "Silver Chain / シルバーチェーン", "keywords": "シルバー925 チェーンネックレス メンズ"},
+    {"name": "Gothic Cross / ゴシッククロス", "keywords": "ゴシック クロス ペンダント シルバー"},
+    {"name": "Puffer Jacket / パファージャケット", "keywords": "パファージャケット メンズ オーバーサイズ"},
+    {"name": "Gold Ring Set / ゴールドリングセット", "keywords": "メンズ リング ゴールド セット"},
 ]
 
 

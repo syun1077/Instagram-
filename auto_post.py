@@ -25,6 +25,13 @@ from modules.ai_image_generator import generate_ai_image
 from modules.uploader import upload_image
 from modules.insta_poster import post_to_instagram, post_carousel_to_instagram
 
+# 楽天API（実商品投稿用）
+try:
+    from modules.rakuten_api import pick_random_product, generate_caption as rakuten_caption
+    RAKUTEN_AVAILABLE = True
+except Exception:
+    RAKUTEN_AVAILABLE = False
+
 # --- 投稿履歴管理（重複防止） ---
 HISTORY_PATH = os.path.join(os.path.dirname(__file__), "post_history.json")
 
@@ -246,12 +253,89 @@ ANGLE_SUFFIXES = [
 ]
 
 
+def post_ai_image():
+    """AI生成画像をカルーセル投稿する。"""
+    temp_image = os.path.join(os.path.dirname(__file__), "temp_image.jpg")
+
+    try:
+        idx, post = pick_unused_post(POSTS)
+        prompt = post["prompt"]
+        caption = add_cta(post["caption"])
+        logging.info(f"[AI投稿] プロンプト: {prompt[:80]}...")
+
+        image_urls = []
+
+        # メイン画像
+        logging.info("AI画像を生成中... (1/3 メイン)")
+        generate_ai_image(prompt, temp_image)
+        image_urls.append(upload_image(temp_image))
+
+        # アングル違い画像 2枚
+        for i, suffix in enumerate(random.sample(ANGLE_SUFFIXES, 2)):
+            angle_prompt = prompt.rsplit(", 8K", 1)[0] + suffix
+            logging.info(f"AI画像を生成中... ({i+2}/3 アングル)")
+            generate_ai_image(angle_prompt, temp_image)
+            image_urls.append(upload_image(temp_image))
+
+        # カルーセル投稿
+        post_id = post_carousel_to_instagram(image_urls, caption)
+        logging.info(f"[AI投稿] 完了! Post ID: {post_id}")
+        return True
+
+    finally:
+        if os.path.exists(temp_image):
+            os.remove(temp_image)
+
+
+def post_real_product():
+    """楽天APIから実商品を取得してカルーセル投稿する。"""
+    product = pick_random_product()
+    if not product:
+        logging.warning("[実商品] 商品が見つからず、AI投稿にフォールバック")
+        return post_ai_image()
+
+    caption = add_cta(rakuten_caption(product))
+    logging.info(f"[実商品] {product['name'][:50]}...")
+    logging.info(f"[実商品] ¥{product['price']:,}")
+
+    # 商品画像をカルーセル投稿（複数画像があれば最大3枚）
+    image_urls = product.get("all_images", [product["image_url"]])[:3]
+
+    # 画像が1枚しかない場合は通常投稿
+    if len(image_urls) == 1:
+        post_id = post_to_instagram(image_urls[0], caption)
+    else:
+        post_id = post_carousel_to_instagram(image_urls, caption)
+
+    logging.info(f"[実商品] 完了! Post ID: {post_id}")
+    return True
+
+
+# --- 投稿モード管理 ---
+MODE_PATH = os.path.join(os.path.dirname(__file__), "post_mode.json")
+
+
+def get_next_mode() -> str:
+    """次の投稿モードを取得する（ai / product を交互に）。"""
+    if os.path.exists(MODE_PATH):
+        with open(MODE_PATH, "r") as f:
+            data = json.load(f)
+            last_mode = data.get("last_mode", "product")
+    else:
+        last_mode = "product"
+
+    next_mode = "product" if last_mode == "ai" else "ai"
+
+    with open(MODE_PATH, "w") as f:
+        json.dump({"last_mode": next_mode}, f)
+
+    return next_mode
+
+
 def auto_post():
-    """完全自動で1投稿を行う。"""
+    """完全自動で1投稿を行う（AI画像と実商品を交互に）。"""
     logging.info("=" * 40)
     logging.info("自動投稿を開始します")
-
-    temp_image = os.path.join(os.path.dirname(__file__), "temp_image.jpg")
 
     try:
         # Step 0: トークン確認＆自動更新
@@ -260,48 +344,23 @@ def auto_post():
             logging.error("トークンが無効です。python get_token.py を実行してください。")
             return False
 
-        # Step 1: 未投稿のアイテムを選択（重複防止）
-        idx, post = pick_unused_post(POSTS)
-        prompt = post["prompt"]
-        caption = add_cta(post["caption"])
-        logging.info(f"プロンプト: {prompt}")
-        logging.info(f"キャプション: {caption[:50]}...")
+        # Step 1: 投稿モード決定（楽天API使えなければ常にAI）
+        if RAKUTEN_AVAILABLE:
+            mode = get_next_mode()
+        else:
+            mode = "ai"
 
-        # Step 2: AI画像生成（メイン + アングル違い2枚 = 計3枚）
-        image_urls = []
+        logging.info(f"投稿モード: {mode}")
 
-        # メイン画像
-        logging.info("AI画像を生成中... (1/3 メイン)")
-        generate_ai_image(prompt, temp_image)
-        logging.info("メイン画像生成完了")
-        image_url = upload_image(temp_image)
-        image_urls.append(image_url)
-        logging.info(f"アップロード完了: {image_url}")
-
-        # アングル違い画像 2枚
-        for i, suffix in enumerate(random.sample(ANGLE_SUFFIXES, 2)):
-            angle_prompt = prompt.rsplit(", 8K", 1)[0] + suffix
-            logging.info(f"AI画像を生成中... ({i+2}/3 アングル)")
-            generate_ai_image(angle_prompt, temp_image)
-            url = upload_image(temp_image)
-            image_urls.append(url)
-            logging.info(f"アップロード完了: {url}")
-
-        # Step 3: カルーセル投稿
-        logging.info(f"Instagramにカルーセル投稿中... ({len(image_urls)}枚)")
-        post_id = post_carousel_to_instagram(image_urls, caption)
-        logging.info(f"投稿完了! Post ID: {post_id}")
-
-        return True
+        # Step 2: 投稿実行
+        if mode == "product":
+            return post_real_product()
+        else:
+            return post_ai_image()
 
     except Exception as e:
         logging.error(f"エラー発生: {e}")
         return False
-
-    finally:
-        if os.path.exists(temp_image):
-            os.remove(temp_image)
-            logging.info("一時ファイルを削除しました")
 
 
 if __name__ == "__main__":

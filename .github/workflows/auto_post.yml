@@ -28,6 +28,8 @@ jobs:
         run: |
           echo "INSTAGRAM_ACCESS_TOKEN=${{ secrets.INSTAGRAM_ACCESS_TOKEN }}" > .env
           echo "INSTAGRAM_ACCOUNT_ID=${{ secrets.INSTAGRAM_ACCOUNT_ID }}" >> .env
+          echo "RAKUTEN_APP_ID=${{ secrets.RAKUTEN_APP_ID }}" >> .env
+          echo "RAKUTEN_AFFILIATE_ID=${{ secrets.RAKUTEN_AFFILIATE_ID }}" >> .env
 
       - name: Create token_info.json
         run: |
@@ -46,7 +48,7 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add post_history.json || true
+          git add post_history.json post_mode.json || true
           git diff --cached --quiet || git commit -m "Update post history [skip ci]"
           git push || true
 

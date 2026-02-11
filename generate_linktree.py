@@ -7,8 +7,8 @@
 import urllib.parse
 
 # --- アフィリエイトID（ここに自分のIDを設定） ---
-RAKUTEN_AFFILIATE_ID = ""  # 例: "your_rakuten_id"
-AMAZON_ASSOCIATE_TAG = ""  # 例: "your-tag-20"
+RAKUTEN_AFFILIATE_ID = "50ea7249.f430e39c.50ea724a.973b1974"
+AMAZON_ASSOCIATE_TAG = "107704-22"
 
 # --- おすすめアイテムキーワード ---
 ITEMS = [

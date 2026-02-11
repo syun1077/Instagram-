@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fashion Picks</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0a0a; color: #fff;
+            min-height: 100vh; padding: 20px;
+        }
+        .container { max-width: 480px; margin: 0 auto; }
+        h1 {
+            text-align: center; font-size: 1.5rem;
+            margin-bottom: 8px; letter-spacing: 2px;
+        }
+        .subtitle {
+            text-align: center; color: #888;
+            font-size: 0.85rem; margin-bottom: 24px;
+        }
+        .item {
+            background: #1a1a1a; border-radius: 12px;
+            padding: 16px; margin-bottom: 12px;
+        }
+        .item-name {
+            font-weight: 600; font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        .links { display: flex; gap: 8px; }
+        .links a {
+            flex: 1; text-align: center; padding: 10px;
+            border-radius: 8px; text-decoration: none;
+            font-size: 0.85rem; font-weight: 600;
+        }
+        .rakuten { background: #bf0000; color: #fff; }
+        .amazon { background: #ff9900; color: #000; }
+        .footer {
+            text-align: center; color: #555;
+            font-size: 0.75rem; margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>FASHION PICKS</h1>
+        <p class="subtitle">Tap to find similar items / タップして類似アイテムを探す</p>
+
+        <div class="item">
+            <div class="item-name">Oversized Hoodie / オーバーサイズパーカー</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2582%25AA%25E3%2583%25BC%25E3%2583%2590%25E3%2583%25BC%25E3%2582%25B5%25E3%2582%25A4%25E3%2582%25BA%2520%25E3%2583%2591%25E3%2583%25BC%25E3%2582%25AB%25E3%2583%25BC%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA%2520%25E9%259F%2593%25E5%259B%25BD/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%82%B5%E3%82%A4%E3%82%BA%20%E3%83%91%E3%83%BC%E3%82%AB%E3%83%BC%20%E3%83%A1%E3%83%B3%E3%82%BA%20%E9%9F%93%E5%9B%BD&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Deconstructed Blazer / デコンストラクトブレザー</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2583%25A2%25E3%2583%25BC%25E3%2583%2589%2520%25E3%2583%2596%25E3%2583%25AC%25E3%2582%25B6%25E3%2583%25BC%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA%2520%25E3%2582%25AA%25E3%2583%25BC%25E3%2583%2590%25E3%2583%25BC%25E3%2582%25B5%25E3%2582%25A4%25E3%2582%25BA/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%83%A2%E3%83%BC%E3%83%89%20%E3%83%96%E3%83%AC%E3%82%B6%E3%83%BC%20%E3%83%A1%E3%83%B3%E3%82%BA%20%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%82%B5%E3%82%A4%E3%82%BA&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Leather Trench / レザートレンチコート</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2583%25AC%25E3%2582%25B6%25E3%2583%25BC%2520%25E3%2583%2588%25E3%2583%25AC%25E3%2583%25B3%25E3%2583%2581%25E3%2582%25B3%25E3%2583%25BC%25E3%2583%2588%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%83%AC%E3%82%B6%E3%83%BC%20%E3%83%88%E3%83%AC%E3%83%B3%E3%83%81%E3%82%B3%E3%83%BC%E3%83%88%20%E3%83%A1%E3%83%B3%E3%82%BA&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Wide-Leg Denim / ワイドデニム</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2583%25AF%25E3%2582%25A4%25E3%2583%2589%25E3%2583%2591%25E3%2583%25B3%25E3%2583%2584%2520%25E3%2583%2587%25E3%2583%258B%25E3%2583%25A0%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%83%AF%E3%82%A4%E3%83%89%E3%83%91%E3%83%B3%E3%83%84%20%E3%83%87%E3%83%8B%E3%83%A0%20%E3%83%A1%E3%83%B3%E3%82%BA&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Technical Cargo / テクニカルカーゴ</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2583%2586%25E3%2583%2583%25E3%2582%25AF%25E3%2582%25A6%25E3%2582%25A7%25E3%2582%25A2%2520%25E3%2582%25AB%25E3%2583%25BC%25E3%2582%25B4%25E3%2583%2591%25E3%2583%25B3%25E3%2583%2584%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%83%86%E3%83%83%E3%82%AF%E3%82%A6%E3%82%A7%E3%82%A2%20%E3%82%AB%E3%83%BC%E3%82%B4%E3%83%91%E3%83%B3%E3%83%84%20%E3%83%A1%E3%83%B3%E3%82%BA&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Platform Sneakers / 厚底スニーカー</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E5%258E%259A%25E5%25BA%2595%2520%25E3%2582%25B9%25E3%2583%258B%25E3%2583%25BC%25E3%2582%25AB%25E3%2583%25BC%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA%2520%25E9%259F%2593%25E5%259B%25BD/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E5%8E%9A%E5%BA%95%20%E3%82%B9%E3%83%8B%E3%83%BC%E3%82%AB%E3%83%BC%20%E3%83%A1%E3%83%B3%E3%82%BA%20%E9%9F%93%E5%9B%BD&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Tabi Boots / タビブーツ</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E8%25B6%25B3%25E8%25A2%258B%25E3%2583%2596%25E3%2583%25BC%25E3%2583%2584%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E8%B6%B3%E8%A2%8B%E3%83%96%E3%83%BC%E3%83%84%20%E3%83%A1%E3%83%B3%E3%82%BA&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Woven Leather Bag / 編み込みレザーバッグ</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2582%25A4%25E3%2583%25B3%25E3%2583%2588%25E3%2583%25AC%25E3%2583%2581%25E3%2583%25A3%25E3%2583%25BC%25E3%2583%2588%2520%25E3%2583%2590%25E3%2583%2583%25E3%2582%25B0%2520%25E3%2583%25AC%25E3%2582%25B6%25E3%2583%25BC/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%82%A4%E3%83%B3%E3%83%88%E3%83%AC%E3%83%81%E3%83%A3%E3%83%BC%E3%83%88%20%E3%83%90%E3%83%83%E3%82%B0%20%E3%83%AC%E3%82%B6%E3%83%BC&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Silver Chain / シルバーチェーン</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2582%25B7%25E3%2583%25AB%25E3%2583%2590%25E3%2583%25BC925%2520%25E3%2583%2581%25E3%2582%25A7%25E3%2583%25BC%25E3%2583%25B3%25E3%2583%258D%25E3%2583%2583%25E3%2582%25AF%25E3%2583%25AC%25E3%2582%25B9%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%82%B7%E3%83%AB%E3%83%90%E3%83%BC925%20%E3%83%81%E3%82%A7%E3%83%BC%E3%83%B3%E3%83%8D%E3%83%83%E3%82%AF%E3%83%AC%E3%82%B9%20%E3%83%A1%E3%83%B3%E3%82%BA&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Gothic Cross / ゴシッククロス</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2582%25B4%25E3%2582%25B7%25E3%2583%2583%25E3%2582%25AF%2520%25E3%2582%25AF%25E3%2583%25AD%25E3%2582%25B9%2520%25E3%2583%259A%25E3%2583%25B3%25E3%2583%2580%25E3%2583%25B3%25E3%2583%2588%2520%25E3%2582%25B7%25E3%2583%25AB%25E3%2583%2590%25E3%2583%25BC/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%82%B4%E3%82%B7%E3%83%83%E3%82%AF%20%E3%82%AF%E3%83%AD%E3%82%B9%20%E3%83%9A%E3%83%B3%E3%83%80%E3%83%B3%E3%83%88%20%E3%82%B7%E3%83%AB%E3%83%90%E3%83%BC&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Puffer Jacket / パファージャケット</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2583%2591%25E3%2583%2595%25E3%2582%25A1%25E3%2583%25BC%25E3%2582%25B8%25E3%2583%25A3%25E3%2582%25B1%25E3%2583%2583%25E3%2583%2588%2520%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA%2520%25E3%2582%25AA%25E3%2583%25BC%25E3%2583%2590%25E3%2583%25BC%25E3%2582%25B5%25E3%2582%25A4%25E3%2582%25BA/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%83%91%E3%83%95%E3%82%A1%E3%83%BC%E3%82%B8%E3%83%A3%E3%82%B1%E3%83%83%E3%83%88%20%E3%83%A1%E3%83%B3%E3%82%BA%20%E3%82%AA%E3%83%BC%E3%83%90%E3%83%BC%E3%82%B5%E3%82%A4%E3%82%BA&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <div class="item">
+            <div class="item-name">Gold Ring Set / ゴールドリングセット</div>
+            <div class="links">
+                <a href="https://hb.afl.rakuten.co.jp/hgc/50ea7249.f430e39c.50ea724a.973b1974/?pc=https%3A//search.rakuten.co.jp/search/mall/%25E3%2583%25A1%25E3%2583%25B3%25E3%2582%25BA%2520%25E3%2583%25AA%25E3%2583%25B3%25E3%2582%25B0%2520%25E3%2582%25B4%25E3%2583%25BC%25E3%2583%25AB%25E3%2583%2589%2520%25E3%2582%25BB%25E3%2583%2583%25E3%2583%2588/" target="_blank" class="rakuten">楽天で探す</a>
+                <a href="https://www.amazon.co.jp/s?k=%E3%83%A1%E3%83%B3%E3%82%BA%20%E3%83%AA%E3%83%B3%E3%82%B0%20%E3%82%B4%E3%83%BC%E3%83%AB%E3%83%89%20%E3%82%BB%E3%83%83%E3%83%88&tag=107704-22" target="_blank" class="amazon">Amazonで探す</a>
+            </div>
+        </div>
+
+        <p class="footer">Updated daily / 毎日更新中</p>
+    </div>
+</body>
+</html>

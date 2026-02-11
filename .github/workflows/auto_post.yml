@@ -2,8 +2,8 @@ name: Instagram Auto Post
 
 on:
   schedule:
-    # 毎日22:00(日本時間)に実行 = UTC 13:00
-    - cron: '0 13 * * *'
+    # 毎日20:00(日本時間)に実行 = UTC 11:00
+    - cron: '0 11 * * *'
   workflow_dispatch:  # 手動実行も可能
 
 jobs:

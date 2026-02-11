@@ -11,8 +11,8 @@ import os
 
 # Pollinations.ai 設定
 POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
-DEFAULT_WIDTH = 1080
-DEFAULT_HEIGHT = 1080
+DEFAULT_WIDTH = 1440
+DEFAULT_HEIGHT = 1440
 
 
 def generate_ai_image(
@@ -20,10 +20,14 @@ def generate_ai_image(
     output_path: str = "temp_image.jpg",
     width: int = DEFAULT_WIDTH,
     height: int = DEFAULT_HEIGHT,
-    style_suffix: str = "high quality, 4k, detailed, trending on instagram",
+    style_suffix: str = (
+        "masterpiece, best quality, ultra high resolution, 8K UHD, "
+        "extremely detailed, photorealistic, professional photography, "
+        "sharp focus, HDR, award winning photo"
+    ),
 ) -> str:
     """
-    AIプロンプトから画像を生成してローカルに保存する。
+    AIプロンプトから高画質画像を生成してローカルに保存する。
 
     Pollinations.ai を使用（完全無料・登録不要・APIキー不要）。
     内部でStable Diffusion / Fluxモデルが動作。
@@ -38,7 +42,7 @@ def generate_ai_image(
     Returns:
         保存した画像のファイルパス
     """
-    # プロンプト構築
+    # プロンプト構築（高画質キーワード付き）
     full_prompt = f"{prompt}, {style_suffix}"
     encoded_prompt = urllib.parse.quote(full_prompt)
 
@@ -47,12 +51,15 @@ def generate_ai_image(
         "width": width,
         "height": height,
         "nologo": "true",
+        "enhance": "true",
+        "model": "flux",
     }
 
     print(f"[AI画像生成] プロンプト: {prompt}")
-    print(f"[AI画像生成] 画像を生成中（20〜60秒かかる場合があります）...")
+    print(f"[AI画像生成] 解像度: {width}x{height}")
+    print(f"[AI画像生成] 高画質モードで生成中（1〜3分かかる場合があります）...")
 
-    response = requests.get(url, params=params, timeout=120)
+    response = requests.get(url, params=params, timeout=300)
 
     if response.status_code != 200:
         raise RuntimeError(

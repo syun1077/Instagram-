@@ -397,6 +397,94 @@ POSTS = [
     },
 ]
 
+# --- モデル着用 全身コーディネート投稿 ---
+OUTFIT_POSTS = [
+    # === ストリート×モード ===
+    {
+        "prompt": "Full body fashion editorial photo of a young male model walking on a Tokyo street at dusk, wearing an oversized black deconstructed blazer over a white graphic tee, black wide-leg pleated trousers with sharp crease, chunky platform derby shoes, carrying a woven leather crossbody bag, confident stride, shot from slightly low angle, neon signs reflected on wet pavement, moody cinematic lighting, Japanese street fashion editorial, 8K",
+        "caption": "Tokyo After Dark\n東京アフターダーク\n\n🖤 Deconstructed blazer × Wide pleats × Platform derbys\n脱構築ブレザーにワイドプリーツの黒コーデ。\nThe city is your runway.\n\nBlazer: Oversized deconstructed\nTee: White graphic\nPants: Wide-leg pleats\nShoes: Platform derby\nBag: Woven crossbody\n\n#fashion #ootd #コーデ #全身コーデ #ストリート #モード #東京 #メンズファッション #darkfashion #styling",
+    },
+    {
+        "prompt": "Full body fashion photo of a young female model posing under neon lights in Shibuya crossing at night, wearing a cropped metallic silver puffer jacket with holographic panels over a neon green mesh crop top, high-waisted black vinyl flare pants with reflective piping down the sides, chunky platform combat boots with neon orange laces, oversized futuristic visor sunglasses, multiple chunky acrylic chain necklaces in pink and green, cyberpunk inspired bold pose, neon city lights reflecting off vinyl and metallic surfaces, vibrant Tokyo nightlife fashion editorial, 8K",
+        "caption": "Neon Shibuya Nights\nネオン渋谷ナイツ\n\n💚 Holographic puffer × Vinyl flares × Neon mesh\nホログラフィック×ビニール×ネオンの未来コーデ。\nThe future is bright. Literally.\n\nJacket: Silver holographic puffer\nTop: Neon green mesh crop\nPants: Black vinyl flares\nBoots: Platform combat\nAccessory: Acrylic chain necklaces\n\n#fashion #ootd #コーデ #渋谷 #ネオン #サイバーパンク #レディース #cyberpunk #neon #styling",
+    },
+    {
+        "prompt": "Full body street style photo of a young male model leaning against a concrete wall, wearing a black oversized hoodie with diagonal arrow print layered under a long black leather trench coat, black distressed skinny jeans, triple white chunky platform sneakers, silver Cuban link chain necklace visible, hands in pockets, edgy confident expression, harsh side lighting creating dramatic shadows, urban streetwear editorial, 8K",
+        "caption": "Shadow Walker\nシャドウウォーカー\n\n⚫ Leather trench × Arrow hoodie × Chunky sneakers\nレザートレンチの下に矢印パーカーのレイヤード。\nLayers of darkness.\n\nCoat: Black leather trench\nHoodie: Arrow print oversized\nJeans: Black distressed\nShoes: Triple white platform\nChain: Silver Cuban link\n\n#fashion #ootd #コーデ #ストリート #レザー #レイヤード #黒コーデ #メンズ #darkstyle #streetwear",
+    },
+    {
+        "prompt": "Full body fashion editorial of a young female model striking a pose on a neon-lit rooftop, wearing a bold flame print oversized satin bomber jacket in red orange and yellow over a black latex corset top, acid wash ripped baggy jeans with heavy chain belt, towering clear platform boots showing neon socks, oversized hoop earrings with flame charms, fire-red box braids, fierce expression with one hand raised, dramatic red and orange stage lighting from below, Y2K meets avant-garde fire editorial, 8K",
+        "caption": "Flame Girl\nフレイムガール\n\n🔥 Flame bomber × Latex corset × Clear platforms\n炎プリントボンバー×ラテックス×クリアブーツ。\nSet the trend on fire.\n\nJacket: Flame satin bomber\nTop: Black latex corset\nJeans: Acid wash ripped baggy\nBoots: Clear platform\nBelt: Heavy chain\nEarrings: Flame hoop\n\n#fashion #ootd #コーデ #Y2K #炎 #ラテックス #レディース #flamefashion #avantgarde #styling",
+    },
+    {
+        "prompt": "Full body photo of a young male model standing on a rooftop at sunset, wearing a sage green quilted reversible vest over a black technical nylon shirt, dark olive military cargo shorts, retro heritage running sneakers in cream and forest green, aviator gradient sunglasses, black nylon belt bag across chest, athletic relaxed pose, warm golden sunset backlighting, outdoor urban adventure style, 8K",
+        "caption": "Urban Explorer\nアーバンエクスプローラー\n\n🌿 Quilted vest × Cargo shorts × Retro runners\nベストとカーゴの機能派アウトドアMIX。\nCity to trail, no outfit change needed.\n\nVest: Sage reversible quilted\nShirt: Black tech nylon\nShorts: Olive cargo\nShoes: Retro heritage runners\nBag: Black belt bag\n\n#fashion #ootd #コーデ #アウトドア #ミリタリー #メンズ #機能美 #techwear #adventure #styling",
+    },
+    # === ダーク×アバンギャルド ===
+    {
+        "prompt": "Full body editorial photo of a young androgynous model standing in a dimly lit gallery space, wearing head-to-toe black: draped cowl neck long tee reaching mid-thigh, black pleated wide-leg trousers, split-toe tabi boots, gothic scroll cross pendant on silver chain, black leather gloves, minimalist and dark silhouette against white gallery wall, single harsh spotlight from above, dark avant-garde fashion editorial, 8K",
+        "caption": "Gallery Noir\nギャラリーノワール\n\n🖤 All-black: Cowl drape × Wide pleats × Tabi boots\n全身黒のアバンギャルドスタイリング。\nDarkness is a language.\n\nTop: Draped cowl long tee\nPants: Black wide pleats\nBoots: Split-toe tabi\nJewelry: Gothic cross pendant\nGloves: Black lambskin\n\n#fashion #ootd #コーデ #黒コーデ #avantgarde #tabi #darkfashion #モード #allblack #styling",
+    },
+    {
+        "prompt": "Full body fashion photo of a young female model posing in front of a graffiti wall, wearing a cropped varsity jacket with cream wool body and black leather sleeves over a black mesh layered long sleeve top, ultra wide-leg washed denim jeans with raw selvedge hem dragging slightly, holographic high-top sneakers, mismatched celestial earrings, bold confident pose with one hand on hip, vibrant urban energy, colorful street art backdrop, bright daylight, street style photography, 8K",
+        "caption": "Street Art Energy\nストリートアート エナジー\n\n🎨 Varsity jacket × Mesh layer × Ultra wide denim\nバーシティ×メッシュのレイヤード×ワイドデニム。\nBe the art.\n\nJacket: Varsity leather sleeve\nInner: Black mesh layered\nDenim: Ultra wide raw selvedge\nShoes: Holographic high-tops\nEarrings: Celestial mismatched\n\n#fashion #ootd #コーデ #ストリート #デニム #バーシティ #レディース #streetstyle #colorful #styling",
+    },
+    {
+        "prompt": "Full body fashion editorial of a young male model sitting on marble steps of a luxury hotel entrance, wearing a grey marl trompe-l'oeil tuxedo hoodie with pinstripe suit trousers in charcoal, minimalist white Chelsea boots, ultra-thin dress watch visible on wrist, croc-embossed card holder casually held, legs crossed elegantly, warm afternoon sunlight, luxury casual contradiction editorial, 8K",
+        "caption": "Formal Illusion\nフォーマルイリュージョン\n\n🎭 Tuxedo hoodie × Pinstripe trousers × Chelsea boots\nだまし絵タキシードパーカーにピンストライプ。\nFormally informal.\n\nHoodie: Trompe-l'oeil tuxedo\nTrousers: Charcoal pinstripe\nBoots: White Chelsea\nWatch: Ultra-thin dress\nWallet: Croc card holder\n\n#fashion #ootd #コーデ #ミックス #カジュアル #フォーマル #メンズ #unique #smartcasual #styling",
+    },
+    {
+        "prompt": "Full body photo of a young female model standing at a minimalist cafe counter, wearing an oversized striped rugby polo in navy and forest green with white collar, high-waisted black knife pleat wide trousers, patent stiletto ankle boots, quilted lambskin crossbody bag in black, cashmere beanie in heather grey, holding a coffee cup, natural relaxed smile, warm morning cafe light through large windows, effortless preppy luxury, 8K",
+        "caption": "Cafe Morning Prep\nカフェモーニング プレッピー\n\n☕ Rugby polo × Knife pleats × Patent boots\nラグビーポロ×ナイフプリーツの知的コーデ。\nPreppy with an edge.\n\nPolo: Navy/green rugby stripe\nPants: Black knife pleat wide\nBoots: Patent stiletto\nBag: Quilted lambskin\nHat: Cashmere beanie\n\n#fashion #ootd #コーデ #プレッピー #カフェ #レディース #preppy #smartcasual #morning #styling",
+    },
+    {
+        "prompt": "Full body fashion photo of a young male model walking through an autumn park with fallen leaves, wearing a shearling aviator jacket in cognac brown, black cable knit mohair cardigan underneath, gradient dip-dye joggers fading from black to ash, hand-woven tan huarache sandals with socks, compass rose signet ring visible, wool felt fedora in black, warm amber autumn sunlight filtering through trees, heritage meets modern street style, 8K",
+        "caption": "Autumn Heritage Walk\nオータム ヘリテージウォーク\n\n🍂 Shearling aviator × Cable knit × Gradient joggers\nシアリングアビエイターの秋レイヤード。\nLayers for the season.\n\nJacket: Cognac shearling aviator\nKnit: Cable mohair cardigan\nPants: Gradient dip-dye joggers\nShoes: Woven huarache\nHat: Black wool fedora\nRing: Compass signet\n\n#fashion #ootd #コーデ #秋コーデ #レイヤード #ヘリテージ #メンズ #autumn #vintage #styling",
+    },
+    # === 派手×インパクト ===
+    {
+        "prompt": "Full body fashion photo of a young female model walking confidently through a crowded Harajuku street, wearing a bold all-over graffiti-printed oversized denim jacket covered in neon spray paint patterns over a hot pink ribbed bodysuit, patchwork mixed-media wide leg jeans with contrasting denim panels and exposed orange stitching, chunky triple-sole rainbow platform sneakers, stacked colorful acrylic bangles on both wrists, bucket hat covered in pins and patches, energetic stride, bright sunny day, explosive Harajuku kawaii street fashion, 8K",
+        "caption": "Harajuku Explosion\n原宿エクスプロージョン\n\n🌈 Graffiti denim × Pink bodysuit × Rainbow platforms\nグラフィティデニム×ピンクボディスーツの原宿全開コーデ。\nColor is my language.\n\nJacket: Graffiti spray paint denim\nTop: Hot pink bodysuit\nJeans: Patchwork mixed-media\nShoes: Rainbow triple-sole platforms\nAccessory: Stacked acrylic bangles\nHat: Pin-covered bucket hat\n\n#fashion #ootd #コーデ #原宿 #グラフィティ #カラフル #レディース #harajuku #kawaii #styling",
+    },
+    {
+        "prompt": "Full body editorial photo of a young male model standing in front of a luxury car showroom window, wearing a camel oblique jacquard bomber jacket, white sheer organza layered shirt underneath, tailored black wool trousers with integrated leather belt, polished black mega sole derby shoes, open gold cuff bangle on wrist, hands casually at sides, warm evening showroom lighting reflecting off glass, French luxury casual editorial, 8K",
+        "caption": "Showroom After Hours\nショールーム アフターアワーズ\n\n✨ Jacquard bomber × Organza shirt × Mega sole derbys\nジャカードボンバー×透けるシャツの大人コーデ。\nEvening elegance.\n\nJacket: Oblique jacquard bomber\nShirt: Sheer organza layered\nPants: Integrated belt wool\nShoes: Mega sole derby\nBangle: Gold open cuff\n\n#fashion #ootd #コーデ #フレンチ #ジャカード #大人コーデ #メンズ #luxury #evening #styling",
+    },
+    {
+        "prompt": "Full body fashion photo of a young female model on a beach boardwalk at sunset, wearing a transparent clear PVC raincoat over a black ribbed tank top and white linen drawstring wide pants, woven raffia fold-over clutch in hand, hand-woven huarache sandals in tan, hammered gold hoop earrings, wind blowing hair, golden sunset creating silhouette effect through the clear coat, resort meets avant-garde summer editorial, 8K",
+        "caption": "Transparent Summer\nトランスペアレント サマー\n\n🌊 Clear PVC coat × Linen wide × Raffia clutch\n透明レインコートを夏のビーチで。\nNothing to hide, everything to show.\n\nCoat: Clear PVC raincoat\nTop: Black ribbed tank\nPants: White linen wide\nShoes: Woven huarache\nBag: Raffia clutch\nEarrings: Hammered gold hoops\n\n#fashion #ootd #コーデ #夏コーデ #ビーチ #PVC #レディース #summer #avantgarde #styling",
+    },
+    {
+        "prompt": "Full body photo of a young male model leaning against a brick wall in Harajuku, wearing a destroyed luxury hoodie with intentional rips and faded print, black 3D pocket technical cargo pants with toggle hem, speed knit sock runner sneakers in all black, medallion chain bracelet on wrist, technical nylon belt bag worn crossbody, hood up with earbuds in, casual urban posture, overcast soft daylight, Tokyo Harajuku street fashion documentary style, 8K",
+        "caption": "Harajuku Utility\n原宿ユーティリティ\n\n🔧 Destroyed hoodie × 3D cargo × Sock runners\nダメージパーカー×立体カーゴのストリートコーデ。\nFunctional destruction.\n\nHoodie: Destroyed luxury\nPants: 3D pocket tech cargo\nShoes: Speed knit sock runners\nBag: Tech nylon belt bag\nBracelet: Medallion chain\n\n#fashion #ootd #コーデ #原宿 #ストリート #テックウェア #メンズ #harajuku #techwear #styling",
+    },
+    {
+        "prompt": "Full body fashion editorial of a young female model sitting on a velvet sofa in a luxury apartment, wearing a double-layered sheer black organza shirt over black tank, sky blue lambskin leather trousers, patent stiletto ankle boots, layered silver chain necklace set with padlock pendant, burgundy grained leather camera bag on shoulder, legs crossed elegantly, moody warm interior lighting with table lamp glow, evening luxury at home editorial, 8K",
+        "caption": "Evening In\nイブニングイン\n\n🕯️ Organza shirt × Lambskin pants × Patent boots\nシアーオーガンザ×レザーパンツの夜コーデ。\nStaying in never looked this good.\n\nShirt: Sheer organza layered\nPants: Sky blue lambskin\nBoots: Patent stiletto\nBag: Burgundy camera bag\nNecklace: Silver layered chains\n\n#fashion #ootd #コーデ #大人コーデ #レザー #シアー #レディース #evening #luxury #styling",
+    },
+    # === スポーツ×ラグジュアリー ===
+    {
+        "prompt": "Full body fashion photo of a young male model jogging through a park in early morning mist, wearing a black cocoon sculpted puffer jacket unzipped, satin stripe tuxedo track pants, retro heritage runners in cream burgundy and forest green, cashmere ribbed beanie in heather grey, stackable gold ring set visible on hand, airpods in ears, dynamic motion captured mid-stride, misty soft morning light, luxury athleisure lifestyle editorial, 8K",
+        "caption": "Morning Run Luxe\nモーニングラン ラグジュアリー\n\n🏃 Cocoon puffer × Tuxedo tracks × Retro runners\nコクーンパファー×タキシードトラックの朝ランコーデ。\nEven your warm-up deserves style.\n\nJacket: Black cocoon puffer\nPants: Satin stripe tuxedo tracks\nShoes: Retro heritage runners\nHat: Cashmere beanie\nRings: Gold stackable set\n\n#fashion #ootd #コーデ #アスレジャー #ランニング #パファー #メンズ #athleisure #morning #styling",
+    },
+    {
+        "prompt": "Full body fashion photo of a young female model posing dramatically in a chrome-decorated warehouse, wearing a metallic chrome silver trench coat with mirror-finish panels, underneath a bold graphic print turtleneck in electric blue and black geometric patterns, high-waisted wide-leg leather pants in deep burgundy with exposed silver zippers, towering chrome platform ankle boots, oversized geometric sculptural earrings in silver, statement chrome clutch bag shaped like a crescent moon, powerful wide stance, harsh industrial spotlights creating reflections on all metallic surfaces, futuristic high fashion editorial, 8K",
+        "caption": "Chrome Dimension\nクロームディメンション\n\n🪞 Chrome trench × Geometric print × Mirror platforms\nクローム×幾何学プリント×メタリックの近未来コーデ。\nReflect the future.\n\nCoat: Chrome mirror trench\nTop: Geometric turtleneck\nPants: Burgundy leather wide\nBoots: Chrome platform\nBag: Crescent moon clutch\nEarrings: Sculptural silver\n\n#fashion #ootd #コーデ #クローム #メタリック #近未来 #レディース #chrome #futuristic #styling",
+    },
+    {
+        "prompt": "Full body fashion photo of a young male model at a train station platform, wearing a hybrid trench-puffer coat in black with gabardine top and quilted bottom, black mesh layered long sleeve underneath, gradient dip-dye joggers from black to charcoal, futuristic metallic silver high-top sneakers with holographic panels, technical nylon belt bag, looking down at phone, overhead fluorescent station lighting mixed with golden sunset through platform windows, Japanese urban commuter fashion, 8K",
+        "caption": "Platform Style\nプラットフォームスタイル\n\n🚉 Hybrid trench × Gradient joggers × Holographic sneakers\nハイブリッドコート×ホログラフィックスニーカー。\nCommute in the future.\n\nCoat: Hybrid trench-puffer\nInner: Black mesh layered\nPants: Gradient dip-dye joggers\nShoes: Holographic high-tops\nBag: Technical belt bag\n\n#fashion #ootd #コーデ #未来的 #ハイブリッド #メンズ #通勤 #futuristic #techwear #styling",
+    },
+    {
+        "prompt": "Full body editorial photo of a young female model walking down a cobblestone street in Paris, wearing a studded black leather biker jacket, equestrian print silk scarf tied at neck, high-waisted charcoal pinstripe trousers, polished mega sole derby shoes, monogram buckle saddle bag in cognac leather, aviator gradient sunglasses, confident Parisian stride, warm afternoon light casting long shadows on stone, French rock chic editorial, 8K",
+        "caption": "Parisian Rock Chic\nパリジャン ロックシック\n\n🗼 Biker jacket × Silk scarf × Pinstripe trousers\nライダース×シルクスカーフのパリスタイル。\nRock meets refinement.\n\nJacket: Studded leather biker\nScarf: Equestrian silk twill\nPants: Charcoal pinstripe\nShoes: Mega sole derby\nBag: Monogram saddle bag\n\n#fashion #ootd #コーデ #パリ #ロック #ライダース #レディース #parisian #rockchic #styling",
+    },
+    {
+        "prompt": "Full body fashion photo of a young male model standing on a rooftop pool deck, wearing an M-65 military field jacket in olive green open over bare chest, white linen drawstring wide pants, woven leather platform slides, gold Cuban link chain necklace, compass badge reversible vest tied around waist, aviator sunglasses, relaxed resort pose with drink in hand, bright blue sky and cityscape behind, rooftop pool party luxury lifestyle, 8K",
+        "caption": "Rooftop Season\nルーフトップシーズン\n\n🏊 Military field jacket × Linen wide × Platform slides\nM-65ジャケット×リネンのリゾートコーデ。\nPool deck commander.\n\nJacket: Olive M-65 field\nPants: White linen drawstring\nShoes: Woven platform slides\nChain: Gold Cuban link\nSunglasses: Aviator gradient\n\n#fashion #ootd #コーデ #リゾート #ミリタリー #プール #メンズ #rooftop #summer #styling",
+    },
+]
+
 # --- CTA（コールトゥアクション）テンプレート ---
 CTAS = [
     "\n\n💾 Save this for your next outfit inspo!\nこのコーデ保存しておいて！",
@@ -438,6 +526,13 @@ ANGLE_SUFFIXES = [
     ", close-up macro detail shot showing fabric texture and stitching, 8K",
     ", styled overhead flat lay with complementary accessories around it, lifestyle photography, 8K",
     ", side angle view showing silhouette and proportions, clean white background, lookbook style, 8K",
+]
+
+# --- コーデ用アングルバリエーション ---
+OUTFIT_ANGLE_SUFFIXES = [
+    ", close-up detail shot of upper body showing layering and accessories, portrait crop, 8K",
+    ", full body from behind showing back details and silhouette, same setting, 8K",
+    ", lower body focus showing pants shoes and bag details, 8K",
 ]
 
 
@@ -569,9 +664,77 @@ def post_real_product():
 MODE_PATH = os.path.join(os.path.dirname(__file__), "post_mode.json")
 
 
+def post_outfit_image():
+    """モデル着用の全身コーデ画像をカルーセル投稿する。"""
+    temp_image = os.path.join(os.path.dirname(__file__), "temp_image.jpg")
+
+    try:
+        idx, post = pick_unused_outfit(OUTFIT_POSTS)
+        prompt = post["prompt"]
+        caption = add_cta(post["caption"], category="outfit")
+        logging.info(f"[コーデ投稿] プロンプト: {prompt[:80]}...")
+
+        image_urls = []
+
+        # メイン画像（全身）
+        logging.info("AI画像を生成中... (1/3 メイン全身)")
+        generate_ai_image(prompt, temp_image)
+        image_urls.append(upload_image(temp_image))
+
+        # アングル違い画像 2枚
+        for i, suffix in enumerate(random.sample(OUTFIT_ANGLE_SUFFIXES, 2)):
+            angle_prompt = prompt.rsplit(", 8K", 1)[0] + suffix
+            logging.info(f"AI画像を生成中... ({i+2}/3 アングル)")
+            generate_ai_image(angle_prompt, temp_image)
+            image_urls.append(upload_image(temp_image))
+
+        # カルーセル投稿
+        post_id = post_carousel_to_instagram(image_urls, caption)
+        logging.info(f"[コーデ投稿] 完了! Post ID: {post_id}")
+
+        # ストーリーにもシェア（メイン画像を使用）
+        auto_story(image_urls[0])
+        return True
+
+    finally:
+        if os.path.exists(temp_image):
+            os.remove(temp_image)
+
+
+# --- コーデ用の投稿履歴管理（POSTS とは別管理）---
+OUTFIT_HISTORY_PATH = os.path.join(os.path.dirname(__file__), "outfit_history.json")
+
+
+def load_outfit_history() -> list[int]:
+    if os.path.exists(OUTFIT_HISTORY_PATH):
+        with open(OUTFIT_HISTORY_PATH, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return []
+
+
+def save_outfit_history(history: list[int]) -> None:
+    with open(OUTFIT_HISTORY_PATH, "w", encoding="utf-8") as f:
+        json.dump(history, f)
+
+
+def pick_unused_outfit(posts: list[dict]) -> tuple[int, dict]:
+    history = load_outfit_history()
+    all_indices = list(range(len(posts)))
+    available = [i for i in all_indices if i not in history]
+    if not available:
+        logging.info("全コーデ投稿済み → 履歴リセット")
+        history = []
+        available = all_indices
+    idx = random.choice(available)
+    history.append(idx)
+    save_outfit_history(history)
+    logging.info(f"コーデ選択: #{idx+1}/{len(posts)} (残り{len(available)-1}件)")
+    return idx, posts[idx]
+
+
 def get_next_mode() -> str:
-    """次の投稿モードを取得する（ai → product → reel のローテーション）。"""
-    MODE_ROTATION = ["ai", "product", "reel", "amazon"] if AMAZON_AVAILABLE else ["ai", "product", "reel"]
+    """次の投稿モードを取得する（ai → outfit → product → reel のローテーション）。"""
+    MODE_ROTATION = ["ai", "outfit", "product", "reel", "amazon"] if AMAZON_AVAILABLE else ["ai", "outfit", "product", "reel"]
 
     if os.path.exists(MODE_PATH):
         with open(MODE_PATH, "r") as f:
@@ -627,6 +790,8 @@ def auto_post():
             result = post_ai_reel()
         elif mode == "amazon":
             result = post_amazon_product()
+        elif mode == "outfit":
+            result = post_outfit_image()
         else:
             result = post_ai_image()
 

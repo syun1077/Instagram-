@@ -63,26 +63,44 @@ def generate_ai_image(
     print(f"[AI画像生成] 解像度: {width}x{height}")
     print(f"[AI画像生成] 高画質モードで生成中（1〜3分かかる場合があります）...")
 
-    response = requests.get(url, params=params, timeout=300)
+    # リトライ付きでAPI呼び出し（一時的なエラー対策）
+    max_retries = 3
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            response = requests.get(url, params=params, timeout=300)
 
-    if response.status_code != 200:
-        raise RuntimeError(
-            f"AI画像生成に失敗しました (HTTP {response.status_code})"
-        )
+            if response.status_code >= 500:
+                raise RuntimeError(f"サーバーエラー (HTTP {response.status_code})")
 
-    # Content-Typeで画像かどうか確認
-    content_type = response.headers.get("content-type", "")
-    if "image" not in content_type:
-        raise RuntimeError(
-            f"画像データを受信できませんでした (Content-Type: {content_type})"
-        )
+            if response.status_code != 200:
+                raise RuntimeError(
+                    f"AI画像生成に失敗しました (HTTP {response.status_code})"
+                )
 
-    with open(output_path, "wb") as f:
-        f.write(response.content)
+            # Content-Typeで画像かどうか確認
+            content_type = response.headers.get("content-type", "")
+            if "image" not in content_type:
+                raise RuntimeError(
+                    f"画像データを受信できませんでした (Content-Type: {content_type})"
+                )
 
-    file_size = os.path.getsize(output_path)
-    print(f"[AI画像生成] 保存完了: {output_path} ({file_size / 1024:.0f} KB)")
-    return output_path
+            with open(output_path, "wb") as f:
+                f.write(response.content)
+
+            file_size = os.path.getsize(output_path)
+            print(f"[AI画像生成] 保存完了: {output_path} ({file_size / 1024:.0f} KB)")
+            return output_path
+
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, RuntimeError) as e:
+            last_error = e
+            if attempt < max_retries:
+                import time as _time
+                wait = 10 * attempt
+                print(f"[AI画像生成] エラー: {e}  → {wait}秒後にリトライ ({attempt}/{max_retries})")
+                _time.sleep(wait)
+            else:
+                raise RuntimeError(f"AI画像生成に{max_retries}回失敗しました: {last_error}")
 
 
 # --- プロンプトのヒント集 ---

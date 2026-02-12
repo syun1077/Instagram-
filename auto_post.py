@@ -14,10 +14,12 @@ from datetime import datetime
 # ログ設定
 LOG_PATH = os.path.join(os.path.dirname(__file__), "auto_post.log")
 logging.basicConfig(
-    filename=LOG_PATH,
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
-    encoding="utf-8",
+    handlers=[
+        logging.FileHandler(LOG_PATH, encoding="utf-8"),
+        logging.StreamHandler(sys.stdout)
+    ]
 )
 
 from modules.token_manager import auto_refresh
@@ -30,6 +32,13 @@ from modules.insta_poster import (
     post_story_to_instagram,
 )
 from modules.hashtags import replace_hashtags
+
+# 自動アンフォロー（ローカル専用、GitHub Actionsでは不要）
+try:
+    from modules.unfollower import unfollow_non_followers
+    UNFOLLOW_AVAILABLE = True
+except ImportError:
+    UNFOLLOW_AVAILABLE = False
 
 # 楽天API（実商品投稿用）
 try:
@@ -630,6 +639,14 @@ def auto_post():
                     analyze_posts()
             except Exception as e:
                 logging.warning(f"[分析] 分析エラー（投稿は成功）: {e}")
+
+        # Step 4: 自動アンフォロー（安全のため毎回実行、ただし内部で制限あり）
+        # .env にユーザー名/パスワードがない場合はスキップされます
+        if UNFOLLOW_AVAILABLE:
+            try:
+                unfollow_non_followers(max_unfollows=10)  # 1回あたり最大10人
+            except Exception as e:
+                logging.warning(f"[Unfollow] エラー（投稿は成功）: {e}")
 
         return result
 

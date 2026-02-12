@@ -52,13 +52,48 @@ jobs:
       - name: Run auto post
         run: python auto_post.py
 
+      # トークンが更新された場合、GitHub Secretsを自動更新する
+      - name: Update token secrets if changed
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+        run: |
+          # token_info.json から最新トークンを読み取る
+          if [ -f token_info.json ]; then
+            NEW_USER_TOKEN=$(python -c "import json; print(json.load(open('token_info.json')).get('user_token',''))")
+            NEW_PAGE_TOKEN=$(python -c "import json; print(json.load(open('token_info.json')).get('page_token',''))")
+            NEW_ACCOUNT_ID=$(python -c "import json; print(json.load(open('token_info.json')).get('account_id',''))")
+
+            OLD_USER_TOKEN="${{ secrets.USER_TOKEN }}"
+            OLD_PAGE_TOKEN="${{ secrets.INSTAGRAM_ACCESS_TOKEN }}"
+
+            # トークンが変わっていたらSecretsを更新
+            if [ -n "$GH_TOKEN" ]; then
+              if [ "$NEW_USER_TOKEN" != "$OLD_USER_TOKEN" ] && [ -n "$NEW_USER_TOKEN" ]; then
+                echo "🔄 USER_TOKEN を更新中..."
+                gh secret set USER_TOKEN --body "$NEW_USER_TOKEN"
+                echo "✅ USER_TOKEN 更新完了"
+              fi
+              if [ "$NEW_PAGE_TOKEN" != "$OLD_PAGE_TOKEN" ] && [ -n "$NEW_PAGE_TOKEN" ]; then
+                echo "🔄 INSTAGRAM_ACCESS_TOKEN を更新中..."
+                gh secret set INSTAGRAM_ACCESS_TOKEN --body "$NEW_PAGE_TOKEN"
+                echo "✅ INSTAGRAM_ACCESS_TOKEN 更新完了"
+              fi
+              if [ -n "$NEW_ACCOUNT_ID" ]; then
+                gh secret set INSTAGRAM_ACCOUNT_ID --body "$NEW_ACCOUNT_ID"
+              fi
+            else
+              echo "⚠️ GH_PAT が設定されていません。トークン自動更新をスキップ。"
+            fi
+          fi
+
       - name: Commit post history
         if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add post_history.json post_mode.json analytics_data.json || true
-          git diff --cached --quiet || git commit -m "Update post history [skip ci]"
+          git add post_history.json post_mode.json analytics_data.json token_info.json || true
+          git diff --cached --quiet || git commit -m "Update post history & tokens [skip ci]"
           git push || true
 
       - name: Show log

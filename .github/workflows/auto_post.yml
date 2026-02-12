@@ -56,6 +56,7 @@ jobs:
       # トークンが更新された場合、GitHub Secretsを自動更新する
       - name: Update token secrets if changed
         if: success()
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |

@@ -40,6 +40,7 @@ jobs:
           echo "AMAZON_ACCESS_KEY=${{ secrets.AMAZON_ACCESS_KEY }}" >> .env
           echo "AMAZON_SECRET_KEY=${{ secrets.AMAZON_SECRET_KEY }}" >> .env
           echo "AMAZON_PARTNER_TAG=${{ secrets.AMAZON_PARTNER_TAG }}" >> .env
+          echo "IMGBB_API_KEY=${{ secrets.IMGBB_API_KEY }}" >> .env
 
       - name: Create token_info.json
         run: |

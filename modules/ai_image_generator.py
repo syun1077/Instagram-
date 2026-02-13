@@ -64,7 +64,7 @@ def generate_ai_image(
     print(f"[AI画像生成] 高画質モードで生成中（1〜3分かかる場合があります）...")
 
     # リトライ付きでAPI呼び出し（一時的なエラー対策）
-    max_retries = 3
+    max_retries = 5
     last_error = None
     for attempt in range(1, max_retries + 1):
         try:
@@ -96,11 +96,25 @@ def generate_ai_image(
             last_error = e
             if attempt < max_retries:
                 import time as _time
-                wait = 10 * attempt
+                wait = 15 * attempt  # 15s, 30s, 45s, 60s
                 print(f"[AI画像生成] エラー: {e}  → {wait}秒後にリトライ ({attempt}/{max_retries})")
                 _time.sleep(wait)
             else:
-                raise RuntimeError(f"AI画像生成に{max_retries}回失敗しました: {last_error}")
+                # Pollinations失敗 → バックアップAPI (Picsum/placeholder) は使えないので
+                # seedを変えて最後にもう1回試行
+                print(f"[AI画像生成] seed変更で最終試行...")
+                import time as _time
+                params["seed"] = int(_time.time() * 500) % 2147483647
+                try:
+                    response = requests.get(url, params=params, timeout=300)
+                    if response.status_code == 200 and "image" in response.headers.get("content-type", ""):
+                        with open(output_path, "wb") as f:
+                            f.write(response.content)
+                        print(f"[AI画像生成] 最終試行で成功!")
+                        return output_path
+                except Exception:
+                    pass
+                raise RuntimeError(f"AI画像生成に失敗しました（{max_retries}回+最終試行）: {last_error}")
 
 
 # --- プロンプトのヒント集 ---

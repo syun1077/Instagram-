@@ -121,8 +121,8 @@ def publish_media(creation_id: str) -> str:
     return post_id
 
 
-def create_carousel_item(image_url: str) -> str:
-    """カルーセル用の子メディアコンテナを作成する。"""
+def create_carousel_item(image_url: str, max_retries: int = 3) -> str:
+    """カルーセル用の子メディアコンテナを作成する（リトライ付き）。"""
     access_token, account_id = _get_credentials()
     url = f"{GRAPH_API_BASE}/{account_id}/media"
     params = {
@@ -130,11 +130,24 @@ def create_carousel_item(image_url: str) -> str:
         "is_carousel_item": "true",
         "access_token": access_token,
     }
-    response = requests.post(url, params=params, timeout=60)
-    data = response.json()
-    if "error" in data:
-        raise RuntimeError(f"カルーセル子コンテナ作成エラー: {data['error'].get('message')}")
-    return data["id"]
+
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        response = requests.post(url, params=params, timeout=60)
+        data = response.json()
+        if "error" not in data and "id" in data:
+            return data["id"]
+
+        error_msg = data.get("error", {}).get("message", "不明なエラー")
+        last_error = error_msg
+        print(f"[Instagram] 子コンテナ作成失敗 (試行 {attempt}/{max_retries}): {error_msg}")
+
+        if attempt < max_retries:
+            wait = 10 * attempt
+            print(f"[Instagram] {wait}秒待機してリトライ...")
+            time.sleep(wait)
+
+    raise RuntimeError(f"カルーセル子コンテナ作成エラー: {last_error}")
 
 
 def create_carousel_container(children_ids: list[str], caption: str) -> str:
@@ -157,34 +170,43 @@ def create_carousel_container(children_ids: list[str], caption: str) -> str:
 def post_carousel_to_instagram(
     image_urls: list[str], caption: str, max_retries: int = 3
 ) -> str:
-    """複数画像をカルーセル投稿する。"""
+    """複数画像をカルーセル投稿する。失敗時は単一画像投稿にフォールバック。"""
     print(f"[Instagram] カルーセル投稿 ({len(image_urls)}枚)...")
 
-    # 子コンテナを作成
-    children_ids = []
-    for i, url in enumerate(image_urls):
-        print(f"[Instagram] 子コンテナ作成中... ({i+1}/{len(image_urls)})")
-        child_id = create_carousel_item(url)
-        children_ids.append(child_id)
+    try:
+        # 子コンテナを作成
+        children_ids = []
+        for i, url in enumerate(image_urls):
+            print(f"[Instagram] 子コンテナ作成中... ({i+1}/{len(image_urls)})")
+            child_id = create_carousel_item(url)
+            children_ids.append(child_id)
+            # Instagram APIの処理時間を確保（画像URLのフェッチに時間がかかる場合がある）
+            time.sleep(5)
 
-    # 親コンテナを作成
-    print("[Instagram] カルーセルコンテナ作成中...")
-    creation_id = create_carousel_container(children_ids, caption)
+        # 親コンテナを作成
+        print("[Instagram] カルーセルコンテナ作成中...")
+        creation_id = create_carousel_container(children_ids, caption)
 
-    # 公開（リトライ付き）
-    for attempt in range(1, max_retries + 1):
-        try:
-            wait_sec = 5 * attempt
-            print(f"[Instagram] コンテナ処理待機中... ({wait_sec}秒)")
-            time.sleep(wait_sec)
-            return publish_media(creation_id)
-        except RuntimeError as e:
-            if "not ready" in str(e).lower() and attempt < max_retries:
-                print(f"[Instagram] リトライ {attempt}/{max_retries}...")
-                continue
-            raise
+        # 公開（リトライ付き）
+        for attempt in range(1, max_retries + 1):
+            try:
+                wait_sec = 10 * attempt
+                print(f"[Instagram] コンテナ処理待機中... ({wait_sec}秒)")
+                time.sleep(wait_sec)
+                return publish_media(creation_id)
+            except RuntimeError as e:
+                if "not ready" in str(e).lower() and attempt < max_retries:
+                    print(f"[Instagram] リトライ {attempt}/{max_retries}...")
+                    continue
+                raise
 
-    raise RuntimeError("カルーセル投稿の公開に失敗しました。")
+        raise RuntimeError("カルーセル投稿の公開に失敗しました。")
+
+    except RuntimeError as e:
+        # カルーセルが失敗した場合、1枚目の画像で通常投稿にフォールバック
+        print(f"[Instagram] カルーセル失敗: {e}")
+        print("[Instagram] 単一画像投稿にフォールバック...")
+        return post_to_instagram(image_urls[0], caption)
 
 
 def create_reel_container(video_url: str, caption: str, cover_url: str = "") -> str:
@@ -314,6 +336,7 @@ def post_story_video_to_instagram(video_url: str, max_retries: int = 10) -> str:
             return publish_media(creation_id)
         elif status == "ERROR":
             raise RuntimeError("ストーリー動画の処理に失敗しました。")
+        # IN_PROGRESS or other → continue waiting
 
     raise RuntimeError("ストーリー動画の処理がタイムアウトしました。")
 

@@ -22,8 +22,8 @@ POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
 DEFAULT_WIDTH = 1080
 DEFAULT_HEIGHT = 1080
 
-# Pollinationsで試すモデルの優先順位
-POLLINATIONS_MODELS = ["flux", "turbo", "flux-realism"]
+# Pollinationsで試すモデルの優先順位（nanobanana優先）
+POLLINATIONS_MODELS = ["nanobanana", "nanobanana-pro", "flux", "turbo"]
 
 
 def _try_pollinations(prompt: str, width: int, height: int) -> bytes | None:

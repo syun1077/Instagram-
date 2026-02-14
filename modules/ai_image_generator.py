@@ -1,6 +1,6 @@
 """
 AI画像/動画生成モジュール
-Pollinations.ai (完全無料・APIキー不要) を使用して、
+Pollinations.ai (無料・APIキー不要) + Together.ai (無料枠) を使用して、
 プロンプトからAI画像を生成する。
 ffmpegでスライドショー動画（リール用）を作成する。
 """
@@ -10,12 +10,142 @@ import urllib.parse
 import os
 import subprocess
 import shutil
+import time
+import base64
 
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Pollinations.ai 設定
 POLLINATIONS_URL = "https://image.pollinations.ai/prompt/{prompt}"
 DEFAULT_WIDTH = 1080
 DEFAULT_HEIGHT = 1080
+
+# Pollinationsで試すモデルの優先順位
+POLLINATIONS_MODELS = ["flux", "turbo", "flux-realism"]
+
+
+def _try_pollinations(prompt: str, width: int, height: int) -> bytes | None:
+    """Pollinations.aiで画像生成を試行する。全モデルを順に試す。"""
+    encoded_prompt = urllib.parse.quote(prompt)
+    url = POLLINATIONS_URL.format(prompt=encoded_prompt)
+
+    for model in POLLINATIONS_MODELS:
+        params = {
+            "width": width,
+            "height": height,
+            "nologo": "true",
+            "enhance": "true",
+            "model": model,
+            "seed": int(time.time() * 1000) % 2147483647,
+        }
+
+        for attempt in range(1, 3):  # 各モデル2回
+            try:
+                print(f"[Pollinations] モデル: {model} (試行 {attempt}/2)")
+                response = requests.get(url, params=params, timeout=300)
+
+                if response.status_code >= 500:
+                    print(f"[Pollinations] サーバーエラー (HTTP {response.status_code})")
+                    if attempt < 2:
+                        time.sleep(10)
+                    continue
+
+                if response.status_code != 200:
+                    print(f"[Pollinations] HTTPエラー ({response.status_code})")
+                    continue
+
+                content_type = response.headers.get("content-type", "")
+                if "image" not in content_type:
+                    print(f"[Pollinations] 画像以外 (Content-Type: {content_type})")
+                    continue
+
+                if len(response.content) < 1000:
+                    print(f"[Pollinations] データ小 ({len(response.content)} bytes)")
+                    continue
+
+                print(f"[Pollinations] 成功! ({len(response.content) / 1024:.0f} KB, モデル: {model})")
+                return response.content
+
+            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+                print(f"[Pollinations] 接続エラー: {e}")
+                if attempt < 2:
+                    time.sleep(10)
+
+    return None
+
+
+def _try_together(prompt: str, width: int, height: int) -> bytes | None:
+    """Together.ai (無料FLUX) で画像生成を試行する。"""
+    api_key = os.getenv("TOGETHER_API_KEY", "")
+    if not api_key:
+        print("[Together] APIキー未設定 → スキップ")
+        return None
+
+    url = "https://api.together.xyz/v1/images/generations"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+
+    # Together.aiの解像度制限に合わせる
+    # FLUX.1-schnell-Freeは特定の解像度のみ対応
+    if width == height:
+        tw, th = 1024, 1024
+    elif width > height:
+        tw, th = 1280, 768
+    else:
+        tw, th = 768, 1280
+
+    data = {
+        "model": "black-forest-labs/FLUX.1-schnell-Free",
+        "prompt": prompt,
+        "width": tw,
+        "height": th,
+        "steps": 4,
+        "n": 1,
+        "response_format": "b64_json",
+    }
+
+    for attempt in range(1, 4):  # 3回リトライ
+        try:
+            print(f"[Together] FLUX.1-schnell で生成中... (試行 {attempt}/3)")
+            response = requests.post(url, json=data, headers=headers, timeout=120)
+
+            if response.status_code == 200:
+                result = response.json()
+                if "data" in result and len(result["data"]) > 0:
+                    # b64_json形式の場合
+                    b64_data = result["data"][0].get("b64_json", "")
+                    if b64_data:
+                        image_bytes = base64.b64decode(b64_data)
+                        print(f"[Together] 成功! ({len(image_bytes) / 1024:.0f} KB)")
+                        return image_bytes
+
+                    # URL形式の場合
+                    img_url = result["data"][0].get("url", "")
+                    if img_url:
+                        img_resp = requests.get(img_url, timeout=60)
+                        if img_resp.status_code == 200:
+                            print(f"[Together] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
+                            return img_resp.content
+
+            elif response.status_code == 429:
+                print(f"[Together] レートリミット → 30秒待機")
+                time.sleep(30)
+                continue
+            else:
+                error_msg = response.json().get("error", {}).get("message", response.text[:200])
+                print(f"[Together] エラー ({response.status_code}): {error_msg}")
+
+        except Exception as e:
+            print(f"[Together] エラー: {e}")
+
+        if attempt < 3:
+            time.sleep(10)
+
+    return None
 
 
 def generate_ai_image(
@@ -31,90 +161,36 @@ def generate_ai_image(
     """
     AIプロンプトから高画質画像を生成してローカルに保存する。
 
-    Pollinations.ai を使用（完全無料・登録不要・APIキー不要）。
-    内部でStable Diffusion / Fluxモデルが動作。
-
-    Args:
-        prompt: 画像生成プロンプト（英語推奨）
-        output_path: 保存先パス
-        width: 画像の幅 (px)
-        height: 画像の高さ (px)
-        style_suffix: プロンプトに自動追加するスタイル指定
-
-    Returns:
-        保存した画像のファイルパス
+    1. Pollinations.ai（無料・APIキー不要）を複数モデルで試行
+    2. 失敗時 → Together.ai（無料枠・APIキー必要）にフォールバック
     """
-    # プロンプト構築（高画質キーワード付き）
     full_prompt = f"{prompt}, {style_suffix}"
-    encoded_prompt = urllib.parse.quote(full_prompt)
-
-    url = POLLINATIONS_URL.format(prompt=encoded_prompt)
-    import time
-    params = {
-        "width": width,
-        "height": height,
-        "nologo": "true",
-        "enhance": "true",
-        "model": "flux",
-        "seed": int(time.time() * 1000) % 2147483647,
-    }
 
     print(f"[AI画像生成] プロンプト: {prompt}")
     print(f"[AI画像生成] 解像度: {width}x{height}")
-    print(f"[AI画像生成] 高画質モードで生成中（1〜3分かかる場合があります）...")
 
-    # リトライ付きでAPI呼び出し（一時的なエラー対策）
-    max_retries = 5
-    last_error = None
-    for attempt in range(1, max_retries + 1):
-        try:
-            response = requests.get(url, params=params, timeout=300)
+    # 1. Pollinations.ai を試行
+    print("[AI画像生成] === Pollinations.ai で試行 ===")
+    image_data = _try_pollinations(full_prompt, width, height)
 
-            if response.status_code >= 500:
-                raise RuntimeError(f"サーバーエラー (HTTP {response.status_code})")
+    # 2. Pollinations失敗 → Together.ai
+    if not image_data:
+        print("[AI画像生成] === Together.ai にフォールバック ===")
+        image_data = _try_together(full_prompt, width, height)
 
-            if response.status_code != 200:
-                raise RuntimeError(
-                    f"AI画像生成に失敗しました (HTTP {response.status_code})"
-                )
+    # 3. 全て失敗
+    if not image_data:
+        raise RuntimeError(
+            "AI画像生成に全APIで失敗しました。"
+            "Pollinations.aiがダウン中、かつTOGETHER_API_KEYが未設定の可能性があります。"
+        )
 
-            # Content-Typeで画像かどうか確認
-            content_type = response.headers.get("content-type", "")
-            if "image" not in content_type:
-                raise RuntimeError(
-                    f"画像データを受信できませんでした (Content-Type: {content_type})"
-                )
+    with open(output_path, "wb") as f:
+        f.write(image_data)
 
-            with open(output_path, "wb") as f:
-                f.write(response.content)
-
-            file_size = os.path.getsize(output_path)
-            print(f"[AI画像生成] 保存完了: {output_path} ({file_size / 1024:.0f} KB)")
-            return output_path
-
-        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError, RuntimeError) as e:
-            last_error = e
-            if attempt < max_retries:
-                import time as _time
-                wait = 15 * attempt  # 15s, 30s, 45s, 60s
-                print(f"[AI画像生成] エラー: {e}  → {wait}秒後にリトライ ({attempt}/{max_retries})")
-                _time.sleep(wait)
-            else:
-                # Pollinations失敗 → バックアップAPI (Picsum/placeholder) は使えないので
-                # seedを変えて最後にもう1回試行
-                print(f"[AI画像生成] seed変更で最終試行...")
-                import time as _time
-                params["seed"] = int(_time.time() * 500) % 2147483647
-                try:
-                    response = requests.get(url, params=params, timeout=300)
-                    if response.status_code == 200 and "image" in response.headers.get("content-type", ""):
-                        with open(output_path, "wb") as f:
-                            f.write(response.content)
-                        print(f"[AI画像生成] 最終試行で成功!")
-                        return output_path
-                except Exception:
-                    pass
-                raise RuntimeError(f"AI画像生成に失敗しました（{max_retries}回+最終試行）: {last_error}")
+    file_size = os.path.getsize(output_path)
+    print(f"[AI画像生成] 保存完了: {output_path} ({file_size / 1024:.0f} KB)")
+    return output_path
 
 
 # --- プロンプトのヒント集 ---
@@ -151,17 +227,6 @@ def generate_slideshow_video(
     """
     複数の画像からズーム/パンエフェクト付きスライドショー動画を生成する。
     Instagram Reels用（9:16縦長）。
-
-    Args:
-        image_paths: 入力画像パスのリスト
-        output_path: 出力動画パス
-        duration_per_image: 各画像の表示時間（秒）
-        fps: フレームレート
-        width: 動画の幅
-        height: 動画の高さ
-
-    Returns:
-        生成した動画のファイルパス
     """
     if not shutil.which("ffmpeg"):
         raise RuntimeError(
@@ -180,17 +245,12 @@ def generate_slideshow_video(
 
     # ズームエフェクトのパターン（画像ごとに変える）
     zoom_effects = [
-        # ズームイン（中心から）
         f"zoompan=z='min(zoom+0.002,1.3)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}",
-        # ズームアウト
         f"zoompan=z='if(eq(on,1),1.3,max(zoom-0.002,1.0))':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}",
-        # 左から右へパン
         f"zoompan=z='1.2':x='if(eq(on,1),0,min(x+2,iw-iw/zoom))':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}",
-        # 右上からズームイン
         f"zoompan=z='min(zoom+0.0015,1.25)':x='iw/3-(iw/zoom/3)':y='ih/3-(ih/zoom/3)':d={frames}:s={width}x{height}:fps={fps}",
     ]
 
-    # 各画像を個別に動画クリップに変換
     clip_paths = []
     for i, img_path in enumerate(image_paths):
         clip_path = f"temp_clip_{i}.mp4"
@@ -214,7 +274,6 @@ def generate_slideshow_video(
         if result.returncode != 0:
             raise RuntimeError(f"ffmpegクリップ作成エラー: {result.stderr[-500:]}")
 
-    # クリップを結合
     concat_file = "temp_concat.txt"
     with open(concat_file, "w") as f:
         for clip_path in clip_paths:
@@ -237,7 +296,6 @@ def generate_slideshow_video(
     if result.returncode != 0:
         raise RuntimeError(f"ffmpeg結合エラー: {result.stderr[-500:]}")
 
-    # 一時ファイル削除
     for clip_path in clip_paths:
         if os.path.exists(clip_path):
             os.remove(clip_path)
@@ -256,22 +314,9 @@ def generate_reel_images(
     width: int = 1080,
     height: int = 1920,
 ) -> list[str]:
-    """
-    リール用の縦長画像を複数生成する。
-
-    Args:
-        prompt: ベースプロンプト
-        output_dir: 画像保存先ディレクトリ
-        num_images: 生成枚数
-        width: 画像幅
-        height: 画像高さ
-
-    Returns:
-        生成した画像パスのリスト
-    """
-    # リール用のアングルバリエーション
+    """リール用の縦長画像を複数生成する。"""
     reel_angles = [
-        "",  # オリジナル
+        "",
         ", close-up detail shot showing fabric texture and material quality",
         ", full body outfit view from slightly low angle, dynamic pose",
         ", artistic overhead flat lay with styling accessories, dark moody background",

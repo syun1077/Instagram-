@@ -136,8 +136,11 @@ def _try_together(prompt: str, width: int, height: int) -> bytes | None:
                             print(f"[Together] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
                             return img_resp.content
 
+            elif response.status_code == 401:
+                print("[Together] APIキーが無効 → スキップ")
+                return None
             elif response.status_code == 429:
-                print(f"[Together] レートリミット → 30秒待機")
+                print("[Together] レートリミット → 30秒待機")
                 time.sleep(30)
                 continue
             else:

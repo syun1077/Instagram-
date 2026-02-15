@@ -29,7 +29,7 @@ BROWSER_HEADERS = {"User-Agent": BROWSER_UA}
 SIMPLE_HEADERS = {"User-Agent": SIMPLE_UA}
 
 
-def _upload_catbox(file_path: str, mime_type: str, timeout: int = 60) -> str:
+def _upload_catbox(file_path: str, mime_type: str, timeout: int = 20) -> str:
     """Catbox.moeにアップロードする。"""
     with open(file_path, "rb") as f:
         files = {"fileToUpload": (os.path.basename(file_path), f, mime_type)}
@@ -48,7 +48,7 @@ def _upload_catbox(file_path: str, mime_type: str, timeout: int = 60) -> str:
     return url
 
 
-def _upload_litterbox(file_path: str, mime_type: str, timeout: int = 60) -> str:
+def _upload_litterbox(file_path: str, mime_type: str, timeout: int = 20) -> str:
     """Litterbox（Catbox姉妹サイト、72時間保持）にアップロードする。"""
     with open(file_path, "rb") as f:
         files = {"fileToUpload": (os.path.basename(file_path), f, mime_type)}
@@ -181,12 +181,13 @@ def _upload_fileio(file_path: str, mime_type: str, timeout: int = 60) -> str:
 def _upload_with_fallback(file_path: str, mime_type: str, timeout: int = 60, max_retries: int = 2) -> str:
     """複数サービスでフォールバックしながらアップロードする。"""
     if mime_type.startswith("image/"):
+        # freeimage/imgBBを優先（Catbox/Litterboxは不安定なため後回し）
         services = [
-            ("Catbox", _upload_catbox),
-            ("Litterbox", _upload_litterbox),
             ("freeimage", _upload_freeimage),
             ("imgBB", _upload_imgbb),
             ("Imgur", _upload_imgur),
+            ("Catbox", _upload_catbox),
+            ("Litterbox", _upload_litterbox),
             ("file.io", _upload_fileio),
         ]
     else:
@@ -223,7 +224,7 @@ def upload_image(image_path: str) -> str:
     if not os.path.exists(image_path):
         raise FileNotFoundError(f"画像ファイルが見つかりません: {image_path}")
 
-    return _upload_with_fallback(image_path, "image/jpeg", timeout=60)
+    return _upload_with_fallback(image_path, "image/jpeg", timeout=60, max_retries=1)
 
 
 def upload_video(video_path: str) -> str:

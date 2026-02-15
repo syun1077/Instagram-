@@ -148,6 +148,83 @@ def _try_together(prompt: str, width: int, height: int) -> bytes | None:
     return None
 
 
+def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
+    """Stable Horde (完全無料・APIキー不要・コミュニティ運営) で画像生成する。"""
+    # 解像度を1024に調整（Stable Horde推奨）
+    hw = 1024 if width >= 1024 else width
+    hh = 1024 if height >= 1024 else height
+
+    submit_url = "https://stablehorde.net/api/v2/generate/async"
+    data = {
+        "prompt": prompt,
+        "params": {
+            "width": hw,
+            "height": hh,
+            "steps": 25,
+            "sampler_name": "k_euler",
+            "cfg_scale": 7,
+        },
+        "nsfw": False,
+        "models": ["AlbedoBase XL (SDXL)"],
+        "r2": True,
+    }
+    headers = {"apikey": "0000000000", "Content-Type": "application/json"}
+
+    try:
+        print("[StableHorde] ジョブ送信中...")
+        r = requests.post(submit_url, json=data, headers=headers, timeout=30)
+        if r.status_code != 202:
+            print(f"[StableHorde] 送信失敗 ({r.status_code})")
+            return None
+
+        job_id = r.json().get("id")
+        print(f"[StableHorde] ジョブID: {job_id}")
+
+        # 最大5分待機
+        for i in range(60):
+            time.sleep(5)
+            check = requests.get(
+                f"https://stablehorde.net/api/v2/generate/check/{job_id}",
+                timeout=10,
+            )
+            info = check.json()
+            wait = info.get("wait_time", 0)
+            queue = info.get("queue_position", 0)
+
+            if i % 6 == 0:  # 30秒ごとにログ
+                print(f"[StableHorde] 待機中... (キュー: {queue}, 予想: {wait}s)")
+
+            if info.get("done"):
+                # 結果取得
+                result = requests.get(
+                    f"https://stablehorde.net/api/v2/generate/status/{job_id}",
+                    timeout=30,
+                )
+                generations = result.json().get("generations", [])
+                if generations:
+                    img_data = generations[0].get("img", "")
+                    if img_data.startswith("http"):
+                        img_resp = requests.get(img_data, timeout=60)
+                        if img_resp.status_code == 200:
+                            print(f"[StableHorde] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
+                            return img_resp.content
+                    else:
+                        image_bytes = base64.b64decode(img_data)
+                        print(f"[StableHorde] 成功! ({len(image_bytes) / 1024:.0f} KB)")
+                        return image_bytes
+                break
+
+            # 予想待ち時間が5分超なら諦める
+            if wait > 300 and i > 6:
+                print(f"[StableHorde] 待ち時間が長すぎます ({wait}s) → スキップ")
+                break
+
+    except Exception as e:
+        print(f"[StableHorde] エラー: {e}")
+
+    return None
+
+
 def generate_ai_image(
     prompt: str,
     output_path: str = "temp_image.jpg",
@@ -163,6 +240,7 @@ def generate_ai_image(
 
     1. Pollinations.ai（無料・APIキー不要）を複数モデルで試行
     2. 失敗時 → Together.ai（無料枠・APIキー必要）にフォールバック
+    3. 失敗時 → Stable Horde（完全無料・APIキー不要）にフォールバック
     """
     full_prompt = f"{prompt}, {style_suffix}"
 
@@ -178,11 +256,15 @@ def generate_ai_image(
         print("[AI画像生成] === Together.ai にフォールバック ===")
         image_data = _try_together(full_prompt, width, height)
 
-    # 3. 全て失敗
+    # 3. Together.ai失敗 → Stable Horde（完全無料・キー不要）
+    if not image_data:
+        print("[AI画像生成] === Stable Horde にフォールバック（無料・キー不要） ===")
+        image_data = _try_stable_horde(full_prompt, width, height)
+
+    # 4. 全て失敗
     if not image_data:
         raise RuntimeError(
-            "AI画像生成に全APIで失敗しました。"
-            "Pollinations.aiがダウン中、かつTOGETHER_API_KEYが未設定の可能性があります。"
+            "AI画像生成に全API（Pollinations/Together/StableHorde）で失敗しました。"
         )
 
     with open(output_path, "wb") as f:

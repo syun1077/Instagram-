@@ -31,7 +31,15 @@ def _try_pollinations(prompt: str, width: int, height: int) -> bytes | None:
     encoded_prompt = urllib.parse.quote(prompt)
     url = POLLINATIONS_URL.format(prompt=encoded_prompt)
 
+    # サーバーダウン時は素早くスキップするため、最初のモデルで500が出たらカウント
+    server_errors = 0
+
     for model in POLLINATIONS_MODELS:
+        # 2モデル連続で500エラーならサーバー自体がダウンしている
+        if server_errors >= 2:
+            print("[Pollinations] サーバーダウン検出 → スキップ")
+            return None
+
         params = {
             "width": width,
             "height": height,
@@ -41,37 +49,34 @@ def _try_pollinations(prompt: str, width: int, height: int) -> bytes | None:
             "seed": int(time.time() * 1000) % 2147483647,
         }
 
-        for attempt in range(1, 3):  # 各モデル2回
-            try:
-                print(f"[Pollinations] モデル: {model} (試行 {attempt}/2)")
-                response = requests.get(url, params=params, timeout=300)
+        try:
+            print(f"[Pollinations] モデル: {model}")
+            response = requests.get(url, params=params, timeout=120)
 
-                if response.status_code >= 500:
-                    print(f"[Pollinations] サーバーエラー (HTTP {response.status_code})")
-                    if attempt < 2:
-                        time.sleep(10)
-                    continue
+            if response.status_code >= 500:
+                print(f"[Pollinations] サーバーエラー (HTTP {response.status_code})")
+                server_errors += 1
+                continue
 
-                if response.status_code != 200:
-                    print(f"[Pollinations] HTTPエラー ({response.status_code})")
-                    continue
+            if response.status_code != 200:
+                print(f"[Pollinations] HTTPエラー ({response.status_code})")
+                continue
 
-                content_type = response.headers.get("content-type", "")
-                if "image" not in content_type:
-                    print(f"[Pollinations] 画像以外 (Content-Type: {content_type})")
-                    continue
+            content_type = response.headers.get("content-type", "")
+            if "image" not in content_type:
+                print(f"[Pollinations] 画像以外 (Content-Type: {content_type})")
+                continue
 
-                if len(response.content) < 1000:
-                    print(f"[Pollinations] データ小 ({len(response.content)} bytes)")
-                    continue
+            if len(response.content) < 1000:
+                print(f"[Pollinations] データ小 ({len(response.content)} bytes)")
+                continue
 
-                print(f"[Pollinations] 成功! ({len(response.content) / 1024:.0f} KB, モデル: {model})")
-                return response.content
+            print(f"[Pollinations] 成功! ({len(response.content) / 1024:.0f} KB, モデル: {model})")
+            return response.content
 
-            except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
-                print(f"[Pollinations] 接続エラー: {e}")
-                if attempt < 2:
-                    time.sleep(10)
+        except (requests.exceptions.Timeout, requests.exceptions.ConnectionError) as e:
+            print(f"[Pollinations] 接続エラー: {e}")
+            server_errors += 1
 
     return None
 
@@ -154,18 +159,19 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
     hw = 1024 if width >= 1024 else width
     hh = 1024 if height >= 1024 else height
 
+    # ステップ数を減らして処理を速くする（キュー優先度が上がる）
     submit_url = "https://stablehorde.net/api/v2/generate/async"
     data = {
         "prompt": prompt,
         "params": {
             "width": hw,
             "height": hh,
-            "steps": 25,
+            "steps": 20,
             "sampler_name": "k_euler",
             "cfg_scale": 7,
         },
         "nsfw": False,
-        "models": ["AlbedoBase XL (SDXL)"],
+        "models": ["AlbedoBase XL (SDXL)", "SDXL 1.0", "Deliberate", "DreamShaper"],
         "r2": True,
     }
     headers = {"apikey": "0000000000", "Content-Type": "application/json"}
@@ -174,25 +180,30 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
         print("[StableHorde] ジョブ送信中...")
         r = requests.post(submit_url, json=data, headers=headers, timeout=30)
         if r.status_code != 202:
-            print(f"[StableHorde] 送信失敗 ({r.status_code})")
+            print(f"[StableHorde] 送信失敗 ({r.status_code}): {r.text[:200]}")
             return None
 
         job_id = r.json().get("id")
         print(f"[StableHorde] ジョブID: {job_id}")
 
-        # 最大5分待機
-        for i in range(60):
+        # 最大10分待機（GitHub Actionsのtimeout-minutes: 15に対して余裕を持たせる）
+        for i in range(120):
             time.sleep(5)
-            check = requests.get(
-                f"https://stablehorde.net/api/v2/generate/check/{job_id}",
-                timeout=10,
-            )
-            info = check.json()
+            try:
+                check = requests.get(
+                    f"https://stablehorde.net/api/v2/generate/check/{job_id}",
+                    timeout=15,
+                )
+                info = check.json()
+            except Exception as e:
+                print(f"[StableHorde] チェックエラー: {e}")
+                continue
+
             wait = info.get("wait_time", 0)
             queue = info.get("queue_position", 0)
 
             if i % 6 == 0:  # 30秒ごとにログ
-                print(f"[StableHorde] 待機中... (キュー: {queue}, 予想: {wait}s)")
+                print(f"[StableHorde] 待機中... (キュー: {queue}, 予想: {wait}s, 経過: {i*5}s)")
 
             if info.get("done"):
                 # 結果取得
@@ -214,15 +225,80 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
                         return image_bytes
                 break
 
-            # 予想待ち時間が5分超なら諦める
-            if wait > 300 and i > 6:
-                print(f"[StableHorde] 待ち時間が長すぎます ({wait}s) → スキップ")
+            if info.get("faulted"):
+                print("[StableHorde] ジョブが失敗しました")
                 break
+
+        print("[StableHorde] タイムアウト（10分）")
 
     except Exception as e:
         print(f"[StableHorde] エラー: {e}")
 
     return None
+
+
+def _try_picogen(prompt: str, width: int, height: int) -> bytes | None:
+    """Pollinations.ai の別エンドポイント (text2img) で画像生成を試行する。"""
+    try:
+        # Pollinations text2img API（別エンドポイント）
+        url = "https://text.pollinations.ai/openai/images/generations"
+        data = {
+            "prompt": prompt,
+            "model": "flux",
+            "size": f"{min(width, 1024)}x{min(height, 1024)}",
+            "n": 1,
+        }
+        headers = {"Content-Type": "application/json"}
+
+        print("[Pollinations-Alt] text2img APIで試行中...")
+        response = requests.post(url, json=data, headers=headers, timeout=120)
+
+        if response.status_code == 200:
+            result = response.json()
+            if "data" in result and len(result["data"]) > 0:
+                img_url = result["data"][0].get("url", "")
+                if img_url:
+                    img_resp = requests.get(img_url, timeout=60)
+                    if img_resp.status_code == 200 and len(img_resp.content) > 1000:
+                        print(f"[Pollinations-Alt] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
+                        return img_resp.content
+
+                b64_data = result["data"][0].get("b64_json", "")
+                if b64_data:
+                    image_bytes = base64.b64decode(b64_data)
+                    print(f"[Pollinations-Alt] 成功! ({len(image_bytes) / 1024:.0f} KB)")
+                    return image_bytes
+        else:
+            print(f"[Pollinations-Alt] HTTPエラー ({response.status_code})")
+
+    except Exception as e:
+        print(f"[Pollinations-Alt] エラー: {e}")
+
+    return None
+
+
+def _run_generation_chain(full_prompt: str, width: int, height: int) -> bytes | None:
+    """全APIを順に試行して画像生成する。"""
+    # 1. Pollinations.ai を試行
+    print("[AI画像生成] === Pollinations.ai で試行 ===")
+    image_data = _try_pollinations(full_prompt, width, height)
+
+    # 2. Pollinations 別エンドポイント
+    if not image_data:
+        print("[AI画像生成] === Pollinations 別エンドポイント ===")
+        image_data = _try_picogen(full_prompt, width, height)
+
+    # 3. Together.ai
+    if not image_data:
+        print("[AI画像生成] === Together.ai にフォールバック ===")
+        image_data = _try_together(full_prompt, width, height)
+
+    # 4. Stable Horde（完全無料・キー不要）
+    if not image_data:
+        print("[AI画像生成] === Stable Horde にフォールバック（無料・キー不要） ===")
+        image_data = _try_stable_horde(full_prompt, width, height)
+
+    return image_data
 
 
 def generate_ai_image(
@@ -237,34 +313,25 @@ def generate_ai_image(
 ) -> str:
     """
     AIプロンプトから高画質画像を生成してローカルに保存する。
-
-    1. Pollinations.ai（無料・APIキー不要）を複数モデルで試行
-    2. 失敗時 → Together.ai（無料枠・APIキー必要）にフォールバック
-    3. 失敗時 → Stable Horde（完全無料・APIキー不要）にフォールバック
+    全API失敗時は60秒待って1回リトライする（計2回試行）。
     """
     full_prompt = f"{prompt}, {style_suffix}"
 
     print(f"[AI画像生成] プロンプト: {prompt}")
     print(f"[AI画像生成] 解像度: {width}x{height}")
 
-    # 1. Pollinations.ai を試行
-    print("[AI画像生成] === Pollinations.ai で試行 ===")
-    image_data = _try_pollinations(full_prompt, width, height)
+    # 1回目の試行
+    image_data = _run_generation_chain(full_prompt, width, height)
 
-    # 2. Pollinations失敗 → Together.ai
+    # 全て失敗 → 60秒待ってリトライ（API一時障害対策）
     if not image_data:
-        print("[AI画像生成] === Together.ai にフォールバック ===")
-        image_data = _try_together(full_prompt, width, height)
+        print("[AI画像生成] === 全API失敗。60秒後にリトライ ===")
+        time.sleep(60)
+        image_data = _run_generation_chain(full_prompt, width, height)
 
-    # 3. Together.ai失敗 → Stable Horde（完全無料・キー不要）
-    if not image_data:
-        print("[AI画像生成] === Stable Horde にフォールバック（無料・キー不要） ===")
-        image_data = _try_stable_horde(full_prompt, width, height)
-
-    # 4. 全て失敗
     if not image_data:
         raise RuntimeError(
-            "AI画像生成に全API（Pollinations/Together/StableHorde）で失敗しました。"
+            "AI画像生成に全API（Pollinations/Together/StableHorde）で2回失敗しました。"
         )
 
     with open(output_path, "wb") as f:

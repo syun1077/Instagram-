@@ -42,6 +42,7 @@ jobs:
           echo "AMAZON_PARTNER_TAG=${{ secrets.AMAZON_PARTNER_TAG }}" >> .env
           echo "IMGBB_API_KEY=${{ secrets.IMGBB_API_KEY }}" >> .env
           echo "TOGETHER_API_KEY=${{ secrets.TOGETHER_API_KEY }}" >> .env
+          echo "HF_TOKEN=${{ secrets.HF_TOKEN }}" >> .env
 
       - name: Create token_info.json
         run: |

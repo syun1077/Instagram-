@@ -81,6 +81,64 @@ def _try_pollinations(prompt: str, width: int, height: int) -> bytes | None:
     return None
 
 
+def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
+    """Hugging Face Inference API (無料・FLUX.1-schnell) で画像生成する。"""
+    api_key = os.getenv("HF_TOKEN", "")
+    if not api_key:
+        print("[HuggingFace] HF_TOKEN未設定 → スキップ")
+        return None
+
+    # FLUX.1-schnell: 高品質・高速
+    model = "black-forest-labs/FLUX.1-schnell"
+    url = f"https://api-inference.huggingface.co/models/{model}"
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    data = {
+        "inputs": prompt,
+        "parameters": {
+            "width": min(width, 1024),
+            "height": min(height, 1024),
+            "num_inference_steps": 4,
+            "guidance_scale": 0.0,
+        },
+    }
+
+    for attempt in range(1, 3):
+        try:
+            print(f"[HuggingFace] FLUX.1-schnell で生成中... (試行 {attempt}/2)")
+            response = requests.post(url, json=data, headers=headers, timeout=120)
+
+            if response.status_code == 200:
+                content_type = response.headers.get("content-type", "")
+                if "image" in content_type and len(response.content) > 1000:
+                    print(f"[HuggingFace] 成功! ({len(response.content) / 1024:.0f} KB)")
+                    return response.content
+
+            elif response.status_code == 503:
+                # モデルロード中 → 少し待つ
+                wait = response.json().get("estimated_time", 20)
+                print(f"[HuggingFace] モデルロード中... {min(wait, 30):.0f}秒待機")
+                time.sleep(min(wait, 30))
+                continue
+
+            elif response.status_code == 401:
+                print("[HuggingFace] HF_TOKENが無効 → スキップ")
+                return None
+
+            else:
+                print(f"[HuggingFace] エラー ({response.status_code}): {response.text[:200]}")
+
+        except Exception as e:
+            print(f"[HuggingFace] エラー: {e}")
+
+        if attempt < 2:
+            time.sleep(5)
+
+    return None
+
+
 def _try_together(prompt: str, width: int, height: int) -> bytes | None:
     """Together.ai (無料FLUX) で画像生成を試行する。"""
     api_key = os.getenv("TOGETHER_API_KEY", "")
@@ -291,12 +349,17 @@ def _run_generation_chain(full_prompt: str, width: int, height: int) -> bytes | 
         print("[AI画像生成] === Pollinations 別エンドポイント ===")
         image_data = _try_picogen(full_prompt, width, height)
 
-    # 3. Together.ai
+    # 3. Hugging Face (FLUX.1-schnell, 高品質)
+    if not image_data:
+        print("[AI画像生成] === Hugging Face FLUX.1-schnell にフォールバック ===")
+        image_data = _try_huggingface(full_prompt, width, height)
+
+    # 4. Together.ai
     if not image_data:
         print("[AI画像生成] === Together.ai にフォールバック ===")
         image_data = _try_together(full_prompt, width, height)
 
-    # 4. Stable Horde（完全無料・キー不要）
+    # 5. Stable Horde（完全無料・キー不要）
     if not image_data:
         print("[AI画像生成] === Stable Horde にフォールバック（無料・キー不要） ===")
         image_data = _try_stable_horde(full_prompt, width, height)

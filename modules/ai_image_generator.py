@@ -189,8 +189,8 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
         job_id = r.json().get("id")
         print(f"[StableHorde] ジョブID: {job_id}")
 
-        # 最大7分待機
-        for i in range(84):
+        # 最大5分待機
+        for i in range(60):
             time.sleep(5)
             try:
                 check = requests.get(
@@ -232,7 +232,7 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
                 print("[StableHorde] ジョブが失敗しました")
                 break
 
-        print("[StableHorde] タイムアウト（10分）")
+        print("[StableHorde] タイムアウト（5分）")
 
     except Exception as e:
         print(f"[StableHorde] エラー: {e}")

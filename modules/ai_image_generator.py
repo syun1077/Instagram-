@@ -102,7 +102,7 @@ def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
     }
 
     for model_name, model_id, supports_dims in hf_models:
-        url = f"https://api-inference.huggingface.co/models/{model_id}"
+        url = f"https://router.huggingface.co/hf-inference/models/{model_id}"
         params = {"num_inference_steps": 20, "guidance_scale": 7.5}
         if model_name == "FLUX.1-schnell":
             params = {"num_inference_steps": 4, "guidance_scale": 0.0}
@@ -280,6 +280,11 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
             wait = info.get("wait_time", 0)
             queue = info.get("queue_position", 0)
 
+            # 最初のチェックで待機時間が300秒超なら即スキップ（キュー過多）
+            if i == 0 and wait > 300:
+                print(f"[StableHorde] キュー過多 (待機{wait}s, キュー{queue}件) → スキップ")
+                break
+
             if i % 6 == 0:  # 30秒ごとにログ
                 print(f"[StableHorde] 待機中... (キュー: {queue}, 予想: {wait}s, 経過: {i*5}s)")
 
@@ -316,38 +321,32 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
 
 
 def _try_picogen(prompt: str, width: int, height: int) -> bytes | None:
-    """Pollinations.ai の別エンドポイント (text2img) で画像生成を試行する。"""
+    """Pollinations.ai の別エンドポイント で画像生成を試行する。"""
     try:
-        # Pollinations text2img API（別エンドポイント）
-        url = "https://text.pollinations.ai/openai/images/generations"
-        data = {
-            "prompt": prompt,
-            "model": "flux",
-            "size": f"{min(width, 1024)}x{min(height, 1024)}",
-            "n": 1,
-        }
-        headers = {"Content-Type": "application/json"}
+        # Pollinations モデル直接指定URL（別フォーマット）
+        encoded_prompt = urllib.parse.quote(prompt)
+        for model in ["flux-pro", "flux-dev"]:
+            url = f"https://image.pollinations.ai/prompt/{encoded_prompt}"
+            params = {
+                "width": min(width, 1024),
+                "height": min(height, 1024),
+                "nologo": "true",
+                "model": model,
+                "seed": int(time.time() * 1000) % 2147483647,
+            }
+            print(f"[Pollinations-Alt] {model} で試行中...")
+            response = requests.get(url, params=params, timeout=60)
 
-        print("[Pollinations-Alt] text2img APIで試行中...")
-        response = requests.post(url, json=data, headers=headers, timeout=120)
-
-        if response.status_code == 200:
-            result = response.json()
-            if "data" in result and len(result["data"]) > 0:
-                img_url = result["data"][0].get("url", "")
-                if img_url:
-                    img_resp = requests.get(img_url, timeout=60)
-                    if img_resp.status_code == 200 and len(img_resp.content) > 1000:
-                        print(f"[Pollinations-Alt] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
-                        return img_resp.content
-
-                b64_data = result["data"][0].get("b64_json", "")
-                if b64_data:
-                    image_bytes = base64.b64decode(b64_data)
-                    print(f"[Pollinations-Alt] 成功! ({len(image_bytes) / 1024:.0f} KB)")
-                    return image_bytes
-        else:
-            print(f"[Pollinations-Alt] HTTPエラー ({response.status_code})")
+            if response.status_code == 200:
+                content_type = response.headers.get("content-type", "")
+                if "image" in content_type and len(response.content) > 1000:
+                    print(f"[Pollinations-Alt] 成功! ({len(response.content) / 1024:.0f} KB, {model})")
+                    return response.content
+            elif response.status_code >= 500:
+                print(f"[Pollinations-Alt] {model} サーバーエラー ({response.status_code})")
+                break  # サーバーダウン → これ以上試さない
+            else:
+                print(f"[Pollinations-Alt] {model} HTTPエラー ({response.status_code})")
 
     except Exception as e:
         print(f"[Pollinations-Alt] エラー: {e}")

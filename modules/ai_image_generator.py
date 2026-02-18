@@ -94,8 +94,6 @@ def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
         ("FLUX.1-schnell", "black-forest-labs/FLUX.1-schnell", True),
         # SDXL: 高品質・ライセンス不要（サイズ指定対応）
         ("SDXL", "stabilityai/stable-diffusion-xl-base-1.0", True),
-        # SD v1.5: 安定・ライセンス不要（サイズ指定なし）
-        ("SD-1.5", "runwayml/stable-diffusion-v1-5", False),
     ]
 
     headers = {
@@ -115,7 +113,7 @@ def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
 
         try:
             print(f"[HuggingFace] {model_name} で生成中...")
-            response = requests.post(url, json=data, headers=headers, timeout=120)
+            response = requests.post(url, json=data, headers=headers, timeout=60)
 
             if response.status_code == 200:
                 content_type = response.headers.get("content-type", "")
@@ -131,10 +129,10 @@ def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
                     wait = response.json().get("estimated_time", 20)
                 except Exception:
                     pass
-                print(f"[HuggingFace] {model_name} ロード中... {min(wait, 30):.0f}秒待機")
-                time.sleep(min(wait, 30))
+                print(f"[HuggingFace] {model_name} ロード中... {min(wait, 10):.0f}秒待機")
+                time.sleep(min(wait, 10))
                 # ロード後に再試行
-                response2 = requests.post(url, json=data, headers=headers, timeout=120)
+                response2 = requests.post(url, json=data, headers=headers, timeout=60)
                 if response2.status_code == 200:
                     content_type = response2.headers.get("content-type", "")
                     if "image" in content_type and len(response2.content) > 1000:

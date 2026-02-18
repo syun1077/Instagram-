@@ -765,26 +765,17 @@ def post_outfit_image():
         caption = add_cta(post["caption"], category="outfit")
         logging.info(f"[コーデ投稿] プロンプト: {prompt[:80]}...")
 
-        image_urls = []
-
-        # メイン画像（全身）
-        logging.info("AI画像を生成中... (1/3 メイン全身)")
+        # メイン画像（全身）1枚のみ生成（タイムアウト対策）
+        logging.info("AI画像を生成中... (メイン全身)")
         generate_ai_image(prompt, temp_image)
-        image_urls.append(upload_image(temp_image))
+        image_url = upload_image(temp_image)
 
-        # アングル違い画像 2枚
-        for i, suffix in enumerate(random.sample(OUTFIT_ANGLE_SUFFIXES, 2)):
-            angle_prompt = prompt.rsplit(", 8K", 1)[0] + suffix
-            logging.info(f"AI画像を生成中... ({i+2}/3 アングル)")
-            generate_ai_image(angle_prompt, temp_image)
-            image_urls.append(upload_image(temp_image))
-
-        # カルーセル投稿
-        post_id = post_carousel_to_instagram(image_urls, caption)
+        # シングル画像投稿
+        post_id = post_to_instagram(image_url, caption)
         logging.info(f"[コーデ投稿] 完了! Post ID: {post_id}")
 
-        # ストーリーにもシェア（メイン画像を使用）
-        auto_story(image_urls[0])
+        # ストーリーにもシェア
+        auto_story(image_url)
         return True
 
     finally:

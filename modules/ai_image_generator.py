@@ -88,14 +88,14 @@ def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
         print("[HuggingFace] HF_TOKEN未設定 → スキップ")
         return None
 
-    # 試すモデルのリスト（ライセンス不要のモデルを優先）
+    # 試すモデルのリスト (model_name, model_id, supports_dimensions)
     hf_models = [
-        # FLUX.1-schnell: 高品質（利用規約への同意が必要）
-        ("FLUX.1-schnell", "black-forest-labs/FLUX.1-schnell", {"num_inference_steps": 4, "guidance_scale": 0.0}),
-        # SDXL: 高品質・ライセンス不要
-        ("SDXL", "stabilityai/stable-diffusion-xl-base-1.0", {"num_inference_steps": 20, "guidance_scale": 7.5}),
-        # SD v1.5: 安定・ライセンス不要
-        ("SD-1.5", "runwayml/stable-diffusion-v1-5", {"num_inference_steps": 20, "guidance_scale": 7.5}),
+        # FLUX.1-schnell: 高品質（利用規約への同意が必要、サイズ指定対応）
+        ("FLUX.1-schnell", "black-forest-labs/FLUX.1-schnell", True),
+        # SDXL: 高品質・ライセンス不要（サイズ指定対応）
+        ("SDXL", "stabilityai/stable-diffusion-xl-base-1.0", True),
+        # SD v1.5: 安定・ライセンス不要（サイズ指定なし）
+        ("SD-1.5", "runwayml/stable-diffusion-v1-5", False),
     ]
 
     headers = {
@@ -103,9 +103,15 @@ def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
         "Content-Type": "application/json",
     }
 
-    for model_name, model_id, params in hf_models:
+    for model_name, model_id, supports_dims in hf_models:
         url = f"https://api-inference.huggingface.co/models/{model_id}"
-        data = {"inputs": prompt, "parameters": {**params, "width": min(width, 1024), "height": min(height, 1024)}}
+        params = {"num_inference_steps": 20, "guidance_scale": 7.5}
+        if model_name == "FLUX.1-schnell":
+            params = {"num_inference_steps": 4, "guidance_scale": 0.0}
+        if supports_dims:
+            params["width"] = min(width, 1024)
+            params["height"] = min(height, 1024)
+        data = {"inputs": prompt, "parameters": params}
 
         try:
             print(f"[HuggingFace] {model_name} で生成中...")

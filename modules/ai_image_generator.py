@@ -189,8 +189,8 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
         job_id = r.json().get("id")
         print(f"[StableHorde] ジョブID: {job_id}")
 
-        # 最大10分待機（GitHub Actionsのtimeout-minutes: 15に対して余裕を持たせる）
-        for i in range(120):
+        # 最大7分待機
+        for i in range(84):
             time.sleep(5)
             try:
                 check = requests.get(
@@ -326,10 +326,10 @@ def generate_ai_image(
     # 1回目の試行
     image_data = _run_generation_chain(full_prompt, width, height)
 
-    # 全て失敗 → 60秒待ってリトライ（API一時障害対策）
+    # 全て失敗 → 10秒待ってリトライ（API一時障害対策）
     if not image_data:
-        print("[AI画像生成] === 全API失敗。60秒後にリトライ ===")
-        time.sleep(60)
+        print("[AI画像生成] === 全API失敗。10秒後にリトライ ===")
+        time.sleep(10)
         image_data = _run_generation_chain(full_prompt, width, height)
 
     if not image_data:

@@ -82,59 +82,72 @@ def _try_pollinations(prompt: str, width: int, height: int) -> bytes | None:
 
 
 def _try_huggingface(prompt: str, width: int, height: int) -> bytes | None:
-    """Hugging Face Inference API (無料・FLUX.1-schnell) で画像生成する。"""
+    """Hugging Face Inference API で画像生成する。複数モデルを順に試す。"""
     api_key = os.getenv("HF_TOKEN", "")
     if not api_key:
         print("[HuggingFace] HF_TOKEN未設定 → スキップ")
         return None
 
-    # FLUX.1-schnell: 高品質・高速
-    model = "black-forest-labs/FLUX.1-schnell"
-    url = f"https://api-inference.huggingface.co/models/{model}"
+    # 試すモデルのリスト（ライセンス不要のモデルを優先）
+    hf_models = [
+        # FLUX.1-schnell: 高品質（利用規約への同意が必要）
+        ("FLUX.1-schnell", "black-forest-labs/FLUX.1-schnell", {"num_inference_steps": 4, "guidance_scale": 0.0}),
+        # SDXL: 高品質・ライセンス不要
+        ("SDXL", "stabilityai/stable-diffusion-xl-base-1.0", {"num_inference_steps": 20, "guidance_scale": 7.5}),
+        # SD v1.5: 安定・ライセンス不要
+        ("SD-1.5", "runwayml/stable-diffusion-v1-5", {"num_inference_steps": 20, "guidance_scale": 7.5}),
+    ]
+
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json",
     }
-    data = {
-        "inputs": prompt,
-        "parameters": {
-            "width": min(width, 1024),
-            "height": min(height, 1024),
-            "num_inference_steps": 4,
-            "guidance_scale": 0.0,
-        },
-    }
 
-    for attempt in range(1, 3):
+    for model_name, model_id, params in hf_models:
+        url = f"https://api-inference.huggingface.co/models/{model_id}"
+        data = {"inputs": prompt, "parameters": {**params, "width": min(width, 1024), "height": min(height, 1024)}}
+
         try:
-            print(f"[HuggingFace] FLUX.1-schnell で生成中... (試行 {attempt}/2)")
+            print(f"[HuggingFace] {model_name} で生成中...")
             response = requests.post(url, json=data, headers=headers, timeout=120)
 
             if response.status_code == 200:
                 content_type = response.headers.get("content-type", "")
                 if "image" in content_type and len(response.content) > 1000:
-                    print(f"[HuggingFace] 成功! ({len(response.content) / 1024:.0f} KB)")
+                    print(f"[HuggingFace] {model_name} 成功! ({len(response.content) / 1024:.0f} KB)")
                     return response.content
+                else:
+                    print(f"[HuggingFace] {model_name} レスポンス異常: {content_type}, {len(response.content)}bytes")
 
             elif response.status_code == 503:
-                # モデルロード中 → 少し待つ
-                wait = response.json().get("estimated_time", 20)
-                print(f"[HuggingFace] モデルロード中... {min(wait, 30):.0f}秒待機")
+                wait = 20
+                try:
+                    wait = response.json().get("estimated_time", 20)
+                except Exception:
+                    pass
+                print(f"[HuggingFace] {model_name} ロード中... {min(wait, 30):.0f}秒待機")
                 time.sleep(min(wait, 30))
-                continue
+                # ロード後に再試行
+                response2 = requests.post(url, json=data, headers=headers, timeout=120)
+                if response2.status_code == 200:
+                    content_type = response2.headers.get("content-type", "")
+                    if "image" in content_type and len(response2.content) > 1000:
+                        print(f"[HuggingFace] {model_name} 成功! ({len(response2.content) / 1024:.0f} KB)")
+                        return response2.content
 
             elif response.status_code == 401:
-                print("[HuggingFace] HF_TOKENが無効 → スキップ")
+                print("[HuggingFace] HF_TOKENが無効 → 全モデルスキップ")
                 return None
 
+            elif response.status_code == 403:
+                print(f"[HuggingFace] {model_name} 利用規約未同意 → 次のモデルへ")
+                continue
+
             else:
-                print(f"[HuggingFace] エラー ({response.status_code}): {response.text[:200]}")
+                print(f"[HuggingFace] {model_name} エラー ({response.status_code}): {response.text[:200]}")
 
         except Exception as e:
-            print(f"[HuggingFace] エラー: {e}")
-
-        if attempt < 2:
-            time.sleep(5)
+            print(f"[HuggingFace] {model_name} エラー: {e}")
 
     return None
 

@@ -211,11 +211,9 @@ def _upload_with_fallback(file_path: str, mime_type: str, timeout: int = 60, max
             ("file.io", _upload_fileio),
         ]
     else:
-        # 動画: 0x0.st を優先（Catbox/Litterboxは不安定なため後回し）
+        # 動画: 0x0.st を優先（Catbox/Litterboxは完全ダウン中のため除外）
         services = [
             ("0x0.st", _upload_0x0),
-            ("Catbox", _upload_catbox),
-            ("Litterbox", _upload_litterbox),
             ("file.io", _upload_fileio),
         ]
 

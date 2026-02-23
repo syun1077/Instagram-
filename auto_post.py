@@ -855,21 +855,24 @@ def get_next_mode() -> str:
     # 6回中4回がコーデ、1回が商品、1回がリール
     MODE_ROTATION = ["outfit", "outfit", "product", "outfit", "outfit", "reel"]
 
+    last_index = -1  # デフォルト: 次回はindex 0 (outfit)
     if os.path.exists(MODE_PATH):
         with open(MODE_PATH, "r") as f:
             data = json.load(f)
-            last_mode = data.get("last_mode", "reel")
-    else:
-        last_mode = "reel"
+            if "last_index" in data:
+                last_index = data["last_index"]
+            elif "last_mode" in data:
+                # 旧形式との互換性（last_modeで保存されていた場合）
+                try:
+                    last_index = MODE_ROTATION.index(data["last_mode"])
+                except ValueError:
+                    last_index = -1
 
-    try:
-        current_idx = MODE_ROTATION.index(last_mode)
-        next_mode = MODE_ROTATION[(current_idx + 1) % len(MODE_ROTATION)]
-    except ValueError:
-        next_mode = "outfit"
+    next_index = (last_index + 1) % len(MODE_ROTATION)
+    next_mode = MODE_ROTATION[next_index]
 
     with open(MODE_PATH, "w") as f:
-        json.dump({"last_mode": next_mode}, f)
+        json.dump({"last_index": next_index, "last_mode": next_mode}, f)
 
     return next_mode
 

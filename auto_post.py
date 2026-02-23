@@ -664,6 +664,19 @@ def post_ai_image():
             os.remove(temp_image)
 
 
+def _find_music_file() -> str | None:
+    """music/ フォルダからランダムにMP3/M4A/WAVを選んで返す。なければNone。"""
+    music_dir = os.path.join(os.path.dirname(__file__), "music")
+    if not os.path.isdir(music_dir):
+        return None
+    files = [
+        os.path.join(music_dir, f)
+        for f in os.listdir(music_dir)
+        if f.lower().endswith((".mp3", ".m4a", ".wav", ".aac"))
+    ]
+    return random.choice(files) if files else None
+
+
 def post_ai_reel():
     """AI生成画像からスライドショー動画を作成してリール投稿する。"""
     base_dir = os.path.dirname(__file__)
@@ -679,8 +692,13 @@ def post_ai_reel():
         # リール用縦長画像を4枚生成
         reel_images = generate_reel_images(prompt, output_dir=base_dir, num_images=4)
 
+        # BGM検索
+        music_file = _find_music_file()
+        if music_file:
+            logging.info(f"[リール投稿] BGM: {os.path.basename(music_file)}")
+
         # スライドショー動画生成（各3秒 = 合計12秒）
-        generate_slideshow_video(reel_images, temp_video, duration_per_image=3.0)
+        generate_slideshow_video(reel_images, temp_video, duration_per_image=3.0, music_path=music_file)
 
         # 動画アップロード
         video_url = upload_video(temp_video)

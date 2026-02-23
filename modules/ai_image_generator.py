@@ -473,10 +473,12 @@ def generate_slideshow_video(
     fps: int = 30,
     width: int = 1080,
     height: int = 1920,
+    music_path: str | None = None,
 ) -> str:
     """
     複数の画像からズーム/パンエフェクト付きスライドショー動画を生成する。
     Instagram Reels用（9:16縦長）。
+    music_path: BGMに使うMP3/M4Aファイルのパス（省略可）
     """
     if not shutil.which("ffmpeg"):
         raise RuntimeError(
@@ -493,6 +495,13 @@ def generate_slideshow_video(
     total_duration = duration_per_image * len(image_paths)
     frames = int(duration_per_image * fps)
 
+    # scale+pad で先にアスペクト比を保ったまま9:16にリサイズ→余白は黒埋め
+    scale_pad = (
+        f"scale={width}:{height}:force_original_aspect_ratio=decrease:flags=lanczos,"
+        f"pad={width}:{height}:(ow-iw)/2:(oh-ih)/2:color=black,"
+        f"setsar=1"
+    )
+
     # ズームエフェクトのパターン（画像ごとに変える）
     zoom_effects = [
         f"zoompan=z='min(zoom+0.002,1.3)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d={frames}:s={width}x{height}:fps={fps}",
@@ -506,12 +515,14 @@ def generate_slideshow_video(
         clip_path = f"temp_clip_{i}.mp4"
         clip_paths.append(clip_path)
         effect = zoom_effects[i % len(zoom_effects)]
+        # scale+pad → zoompan の順で適用
+        vf = f"{scale_pad},{effect}"
 
         cmd = [
             "ffmpeg", "-y",
             "-loop", "1",
             "-i", img_path,
-            "-vf", effect,
+            "-vf", vf,
             "-t", str(duration_per_image),
             "-pix_fmt", "yuv420p",
             "-c:v", "libx264",
@@ -529,18 +540,29 @@ def generate_slideshow_video(
         for clip_path in clip_paths:
             f.write(f"file '{clip_path}'\n")
 
+    use_music = music_path and os.path.exists(music_path)
+    if use_music:
+        print(f"[動画生成] BGM追加: {os.path.basename(music_path)}")
+
     cmd = [
         "ffmpeg", "-y",
         "-f", "concat",
         "-safe", "0",
         "-i", concat_file,
+    ]
+    if use_music:
+        cmd += ["-stream_loop", "-1", "-i", music_path]
+    cmd += [
         "-c:v", "libx264",
         "-preset", "fast",
         "-crf", "23",
         "-pix_fmt", "yuv420p",
         "-movflags", "+faststart",
-        output_path,
     ]
+    if use_music:
+        cmd += ["-c:a", "aac", "-b:a", "128k", "-filter:a", "volume=0.4", "-shortest"]
+    cmd.append(output_path)
+
     print("[動画生成] クリップを結合中...")
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
     if result.returncode != 0:

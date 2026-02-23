@@ -17,6 +17,7 @@ FILEIO_UPLOAD_URL = "https://file.io"
 FREEIMAGE_UPLOAD_URL = "https://freeimage.host/api/1/upload"
 IMGUR_UPLOAD_URL = "https://api.imgur.com/3/image"
 ZEROX0_UPLOAD_URL = "https://0x0.st"
+UGUU_UPLOAD_URL = "https://uguu.se/upload.php"
 
 # サービスごとに適切なUser-Agentを使い分ける
 BROWSER_UA = (
@@ -198,6 +199,47 @@ def _upload_0x0(file_path: str, mime_type: str, timeout: int = 120) -> str:
     return url
 
 
+def _upload_transfersh(file_path: str, mime_type: str, timeout: int = 120) -> str:
+    """transfer.shに匿名アップロードする（動画対応、14日保持）。GitHub Actions対応。"""
+    filename = os.path.basename(file_path)
+    with open(file_path, "rb") as f:
+        response = requests.put(
+            f"https://transfer.sh/{filename}",
+            data=f,
+            headers={"Content-Type": mime_type, "User-Agent": SIMPLE_UA},
+            timeout=timeout,
+        )
+
+    if response.status_code not in (200, 201):
+        raise RuntimeError(f"transfer.sh HTTP {response.status_code}: {response.text[:200]}")
+
+    url = response.text.strip()
+    if not url.startswith("https://"):
+        raise RuntimeError(f"transfer.sh 無効なレスポンス: {url[:200]}")
+
+    return url
+
+
+def _upload_uguu(file_path: str, mime_type: str, timeout: int = 120) -> str:
+    """uguu.seに匿名アップロードする（動画対応、48時間保持）。"""
+    with open(file_path, "rb") as f:
+        files = {"files[]": (os.path.basename(file_path), f, mime_type)}
+        response = requests.post(
+            UGUU_UPLOAD_URL, files=files,
+            headers=SIMPLE_HEADERS, timeout=timeout,
+        )
+
+    if response.status_code != 200:
+        raise RuntimeError(f"uguu.se HTTP {response.status_code}: {response.text[:200]}")
+
+    json_data = response.json()
+    if not json_data.get("success"):
+        raise RuntimeError(f"uguu.se エラー: {json_data}")
+
+    url = json_data["files"][0]["url"]
+    return url
+
+
 def _upload_with_fallback(file_path: str, mime_type: str, timeout: int = 60, max_retries: int = 2) -> str:
     """複数サービスでフォールバックしながらアップロードする。"""
     if mime_type.startswith("image/"):
@@ -211,8 +253,10 @@ def _upload_with_fallback(file_path: str, mime_type: str, timeout: int = 60, max
             ("file.io", _upload_fileio),
         ]
     else:
-        # 動画: 0x0.st を優先（Catbox/Litterboxは完全ダウン中のため除外）
+        # 動画: transfer.sh を優先（GitHub Actions対応・実績あり）
         services = [
+            ("transfer.sh", _upload_transfersh),
+            ("uguu.se", _upload_uguu),
             ("0x0.st", _upload_0x0),
             ("file.io", _upload_fileio),
         ]

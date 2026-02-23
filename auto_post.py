@@ -664,17 +664,51 @@ def post_ai_image():
             os.remove(temp_image)
 
 
+# CC0 / Public Domain BGM 自動ダウンロード用URL（Internet Archive CC0コレクション）
+_BGM_URLS = [
+    ("https://archive.org/download/MarchForHonor/Distant_Wonders.mp3", "bgm_distant_wonders.mp3"),
+    ("https://archive.org/download/MarchForHonor/March_For_Honor.mp3", "bgm_march_for_honor.mp3"),
+    ("https://archive.org/download/landscape-chill-ambient-music-2021/002.%20Ataxy%20-%20Air.mp3", "bgm_air.mp3"),
+    ("https://archive.org/download/landscape-chill-ambient-music-2021/004.%20Fridrik%20Karlsson%20-%20Chillout%20Heaven.mp3", "bgm_chillout.mp3"),
+    ("https://archive.org/download/landscape-chill-ambient-music-2021/005.%20Uppermost%20-%20Feel%20Alive.mp3", "bgm_feel_alive.mp3"),
+]
+
+
 def _find_music_file() -> str | None:
-    """music/ フォルダからランダムにMP3/M4A/WAVを選んで返す。なければNone。"""
+    """music/ フォルダからランダムにMP3を選ぶ。なければ自動ダウンロードを試みる。"""
+    import urllib.request
     music_dir = os.path.join(os.path.dirname(__file__), "music")
-    if not os.path.isdir(music_dir):
-        return None
+    os.makedirs(music_dir, exist_ok=True)
+
     files = [
         os.path.join(music_dir, f)
         for f in os.listdir(music_dir)
         if f.lower().endswith((".mp3", ".m4a", ".wav", ".aac"))
     ]
-    return random.choice(files) if files else None
+    if files:
+        return random.choice(files)
+
+    # ローカルにない場合は自動ダウンロード
+    logging.info("[BGM] music/ にファイルなし → 自動ダウンロード試行...")
+    shuffled = random.sample(_BGM_URLS, len(_BGM_URLS))
+    for url, filename in shuffled:
+        dest = os.path.join(music_dir, filename)
+        try:
+            logging.info(f"[BGM] ダウンロード中: {filename}")
+            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+            with urllib.request.urlopen(req, timeout=30) as resp, open(dest, "wb") as f:
+                f.write(resp.read())
+            if os.path.getsize(dest) > 10_000:
+                logging.info(f"[BGM] ダウンロード完了: {filename}")
+                return dest
+            os.remove(dest)
+        except Exception as e:
+            logging.warning(f"[BGM] ダウンロード失敗 ({filename}): {e}")
+            if os.path.exists(dest):
+                os.remove(dest)
+
+    logging.warning("[BGM] 全URLダウンロード失敗 → 音楽なしで続行")
+    return None
 
 
 def post_ai_reel():
@@ -684,15 +718,15 @@ def post_ai_reel():
     reel_images = []
 
     try:
-        idx, post = pick_unused_post(POSTS)
+        idx, post = pick_unused_outfit(OUTFIT_POSTS)
         prompt = post["prompt"]
-        caption = add_cta(post["caption"])
+        caption = add_cta(post["caption"], category="outfit")
         logging.info(f"[リール投稿] プロンプト: {prompt[:80]}...")
 
         # リール用縦長画像を4枚生成
         reel_images = generate_reel_images(prompt, output_dir=base_dir, num_images=4)
 
-        # BGM検索
+        # BGM検索（なければ自動DL試行）
         music_file = _find_music_file()
         if music_file:
             logging.info(f"[リール投稿] BGM: {os.path.basename(music_file)}")

@@ -173,7 +173,11 @@ def _upload_fileio(file_path: str, mime_type: str, timeout: int = 60) -> str:
     if response.status_code != 200:
         raise RuntimeError(f"file.io HTTP {response.status_code}: {response.text[:200]}")
 
-    json_data = response.json()
+    try:
+        json_data = response.json()
+    except Exception:
+        raise RuntimeError(f"file.io 無効なレスポンス: {response.text[:200]}")
+
     if not json_data.get("success"):
         raise RuntimeError(f"file.io エラー: {json_data}")
 

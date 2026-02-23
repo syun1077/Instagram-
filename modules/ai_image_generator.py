@@ -194,22 +194,32 @@ def _try_together(prompt: str, width: int, height: int) -> bytes | None:
             response = requests.post(url, json=data, headers=headers, timeout=120)
 
             if response.status_code == 200:
-                result = response.json()
+                try:
+                    result = response.json()
+                except Exception:
+                    print(f"[Together] レスポンスJSONパースエラー")
+                    continue
                 if "data" in result and len(result["data"]) > 0:
                     # b64_json形式の場合
                     b64_data = result["data"][0].get("b64_json", "")
                     if b64_data:
-                        image_bytes = base64.b64decode(b64_data)
-                        print(f"[Together] 成功! ({len(image_bytes) / 1024:.0f} KB)")
-                        return image_bytes
+                        try:
+                            image_bytes = base64.b64decode(b64_data)
+                            print(f"[Together] 成功! ({len(image_bytes) / 1024:.0f} KB)")
+                            return image_bytes
+                        except Exception:
+                            print(f"[Together] base64デコードエラー")
 
                     # URL形式の場合
                     img_url = result["data"][0].get("url", "")
                     if img_url:
-                        img_resp = requests.get(img_url, timeout=60)
-                        if img_resp.status_code == 200:
-                            print(f"[Together] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
-                            return img_resp.content
+                        try:
+                            img_resp = requests.get(img_url, timeout=60)
+                            if img_resp.status_code == 200:
+                                print(f"[Together] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
+                                return img_resp.content
+                        except Exception as e:
+                            print(f"[Together] 画像ダウンロードエラー: {e}")
 
             elif response.status_code == 401:
                 print("[Together] APIキーが無効 → スキップ")
@@ -219,7 +229,10 @@ def _try_together(prompt: str, width: int, height: int) -> bytes | None:
                 time.sleep(30)
                 continue
             else:
-                error_msg = response.json().get("error", {}).get("message", response.text[:200])
+                try:
+                    error_msg = response.json().get("error", {}).get("message", response.text[:200])
+                except Exception:
+                    error_msg = response.text[:200]
                 print(f"[Together] エラー ({response.status_code}): {error_msg}")
 
         except Exception as e:
@@ -290,22 +303,28 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
 
             if info.get("done"):
                 # 結果取得
-                result = requests.get(
-                    f"https://stablehorde.net/api/v2/generate/status/{job_id}",
-                    timeout=30,
-                )
-                generations = result.json().get("generations", [])
-                if generations:
-                    img_data = generations[0].get("img", "")
-                    if img_data.startswith("http"):
-                        img_resp = requests.get(img_data, timeout=60)
-                        if img_resp.status_code == 200:
-                            print(f"[StableHorde] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
-                            return img_resp.content
-                    else:
-                        image_bytes = base64.b64decode(img_data)
-                        print(f"[StableHorde] 成功! ({len(image_bytes) / 1024:.0f} KB)")
-                        return image_bytes
+                try:
+                    result = requests.get(
+                        f"https://stablehorde.net/api/v2/generate/status/{job_id}",
+                        timeout=30,
+                    )
+                    generations = result.json().get("generations", [])
+                    if generations:
+                        img_data = generations[0].get("img", "")
+                        if img_data.startswith("http"):
+                            img_resp = requests.get(img_data, timeout=60)
+                            if img_resp.status_code == 200:
+                                print(f"[StableHorde] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
+                                return img_resp.content
+                        elif img_data:
+                            try:
+                                image_bytes = base64.b64decode(img_data)
+                                print(f"[StableHorde] 成功! ({len(image_bytes) / 1024:.0f} KB)")
+                                return image_bytes
+                            except Exception:
+                                print(f"[StableHorde] base64デコードエラー")
+                except Exception as e:
+                    print(f"[StableHorde] 結果取得エラー: {e}")
                 break
 
             if info.get("faulted"):

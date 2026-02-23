@@ -223,10 +223,16 @@ def create_reel_container(video_url: str, caption: str, cover_url: str = "") -> 
     if cover_url:
         params["cover_url"] = cover_url
     response = requests.post(url, params=params, timeout=120)
-    data = response.json()
+    try:
+        data = response.json()
+    except Exception:
+        raise RuntimeError(f"リールコンテナ作成: 無効なレスポンス (HTTP {response.status_code}): {response.text[:300]}")
     if "error" in data:
-        raise RuntimeError(f"リールコンテナ作成エラー: {data['error'].get('message')}")
-    return data["id"]
+        raise RuntimeError(f"リールコンテナ作成エラー: {data['error'].get('message')} (code={data['error'].get('code')})")
+    container_id = data.get("id")
+    if not container_id:
+        raise RuntimeError(f"リールコンテナIDを取得できませんでした: {data}")
+    return container_id
 
 
 def check_container_status(creation_id: str) -> str:
@@ -237,22 +243,26 @@ def check_container_status(creation_id: str) -> str:
         "fields": "status_code",
         "access_token": access_token,
     }
-    response = requests.get(url, params=params, timeout=30)
-    data = response.json()
-    return data.get("status_code", "UNKNOWN")
+    try:
+        response = requests.get(url, params=params, timeout=30)
+        data = response.json()
+        return data.get("status_code", "UNKNOWN")
+    except Exception as e:
+        print(f"[Instagram] ステータス確認エラー: {e}")
+        return "UNKNOWN"
 
 
 def post_reel_to_instagram(
-    video_url: str, caption: str, cover_url: str = "", max_retries: int = 10
+    video_url: str, caption: str, cover_url: str = "", max_retries: int = 40
 ) -> str:
-    """リール動画をInstagramに投稿する（動画処理待ち付き）。"""
+    """リール動画をInstagramに投稿する（動画処理待ち付き、最大10分）。"""
     print(f"[Instagram] リール投稿中...")
     creation_id = create_reel_container(video_url, caption, cover_url)
 
-    # 動画は処理に時間がかかるため、ステータスチェックしながら待機
+    # 動画は処理に時間がかかるため、ステータスチェックしながら待機（最大10分）
     for attempt in range(1, max_retries + 1):
         wait_sec = 15  # 動画は15秒間隔でチェック
-        print(f"[Instagram] 動画処理待機中... ({attempt}/{max_retries}, {wait_sec}秒)")
+        print(f"[Instagram] 動画処理待機中... ({attempt}/{max_retries}, 経過{attempt*wait_sec}秒)")
         time.sleep(wait_sec)
 
         status = check_container_status(creation_id)
@@ -261,10 +271,10 @@ def post_reel_to_instagram(
         if status == "FINISHED":
             return publish_media(creation_id)
         elif status == "ERROR":
-            raise RuntimeError("リール動画の処理に失敗しました。")
-        # IN_PROGRESS or other → continue waiting
+            raise RuntimeError("リール動画の処理に失敗しました（Instagram側エラー）。")
+        # IN_PROGRESS or UNKNOWN → continue waiting
 
-    raise RuntimeError("リール動画の処理がタイムアウトしました。")
+    raise RuntimeError(f"リール動画の処理がタイムアウトしました（{max_retries * wait_sec}秒）。")
 
 
 def create_story_container(image_url: str) -> str:

@@ -685,8 +685,12 @@ def post_ai_reel():
         # 動画アップロード
         video_url = upload_video(temp_video)
 
-        # カバー画像（1枚目を使用）
-        cover_url = upload_image(reel_images[0])
+        # カバー画像（1枚目を使用 / 失敗しても続行）
+        cover_url = ""
+        try:
+            cover_url = upload_image(reel_images[0])
+        except Exception as e:
+            logging.warning(f"[リール投稿] カバー画像アップロード失敗（続行）: {e}")
 
         # リール投稿
         post_id = post_reel_to_instagram(video_url, caption, cover_url=cover_url)

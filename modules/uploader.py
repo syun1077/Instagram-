@@ -16,6 +16,7 @@ IMGBB_UPLOAD_URL = "https://api.imgbb.com/1/upload"
 FILEIO_UPLOAD_URL = "https://file.io"
 FREEIMAGE_UPLOAD_URL = "https://freeimage.host/api/1/upload"
 IMGUR_UPLOAD_URL = "https://api.imgur.com/3/image"
+ZEROX0_UPLOAD_URL = "https://0x0.st"
 
 # サービスごとに適切なUser-Agentを使い分ける
 BROWSER_UA = (
@@ -178,6 +179,25 @@ def _upload_fileio(file_path: str, mime_type: str, timeout: int = 60) -> str:
     return json_data["link"]
 
 
+def _upload_0x0(file_path: str, mime_type: str, timeout: int = 120) -> str:
+    """0x0.stに匿名アップロードする（画像・動画対応、無料・永続）。"""
+    with open(file_path, "rb") as f:
+        files = {"file": (os.path.basename(file_path), f, mime_type)}
+        response = requests.post(
+            ZEROX0_UPLOAD_URL, files=files,
+            headers=SIMPLE_HEADERS, timeout=timeout,
+        )
+
+    if response.status_code != 200:
+        raise RuntimeError(f"0x0.st HTTP {response.status_code}: {response.text[:200]}")
+
+    url = response.text.strip()
+    if not url.startswith("https://"):
+        raise RuntimeError(f"0x0.st 無効なレスポンス: {url[:200]}")
+
+    return url
+
+
 def _upload_with_fallback(file_path: str, mime_type: str, timeout: int = 60, max_retries: int = 2) -> str:
     """複数サービスでフォールバックしながらアップロードする。"""
     if mime_type.startswith("image/"):
@@ -191,8 +211,9 @@ def _upload_with_fallback(file_path: str, mime_type: str, timeout: int = 60, max
             ("file.io", _upload_fileio),
         ]
     else:
-        # 動画は画像専用サービスを除外
+        # 動画: 0x0.st を優先（Catbox/Litterboxは不安定なため後回し）
         services = [
+            ("0x0.st", _upload_0x0),
             ("Catbox", _upload_catbox),
             ("Litterbox", _upload_litterbox),
             ("file.io", _upload_fileio),
@@ -235,4 +256,4 @@ def upload_video(video_path: str) -> str:
     if not os.path.exists(video_path):
         raise FileNotFoundError(f"動画ファイルが見つかりません: {video_path}")
 
-    return _upload_with_fallback(video_path, "video/mp4", timeout=120)
+    return _upload_with_fallback(video_path, "video/mp4", timeout=120, max_retries=1)

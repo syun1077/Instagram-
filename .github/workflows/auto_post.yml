@@ -98,9 +98,18 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add post_history.json post_mode.json analytics_data.json token_info.json || true
-          git diff --cached --quiet || git commit -m "Update post history & tokens [skip ci]"
-          git push || true
+          # 変更ファイルをステージ（-u で追跡済ファイルの変更のみ）
+          git add -u
+          git add post_history.json post_mode.json || true
+          # 差分確認してコミット
+          if ! git diff --cached --quiet; then
+            git commit -m "Update post history [skip ci]"
+            # push競合対策: リモートの最新を取り込んでからpush
+            git pull --rebase origin main || true
+            git push || true
+          else
+            echo "No changes to commit"
+          fi
 
       - name: Show log
         if: always()

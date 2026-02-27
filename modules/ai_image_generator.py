@@ -244,25 +244,168 @@ def _try_together(prompt: str, width: int, height: int) -> bytes | None:
     return None
 
 
+def _try_fal(prompt: str, width: int, height: int) -> bytes | None:
+    """fal.ai (FLUX.1-schnell, 無料クレジット付き) で画像生成する。"""
+    api_key = os.getenv("FAL_KEY", "")
+    if not api_key:
+        print("[fal.ai] FAL_KEY未設定 → スキップ")
+        return None
+
+    # fal.ai でサポートする画像サイズを選択
+    if width == height:
+        image_size = "square_hd"      # 1024x1024
+    elif height > width:
+        image_size = "portrait_16_9"  # 576x1024 (≈9:16)
+    else:
+        image_size = "landscape_16_9" # 1024x576
+
+    headers = {
+        "Authorization": f"Key {api_key}",
+        "Content-Type": "application/json",
+    }
+    data = {
+        "prompt": prompt,
+        "image_size": image_size,
+        "num_inference_steps": 4,
+        "num_images": 1,
+        "enable_safety_checker": False,
+    }
+
+    try:
+        print("[fal.ai] FLUX.1-schnell で生成中...")
+        response = requests.post(
+            "https://fal.run/fal-ai/flux/schnell",
+            json=data,
+            headers=headers,
+            timeout=120,
+        )
+
+        if response.status_code == 401:
+            print("[fal.ai] APIキーが無効 → スキップ")
+            return None
+
+        if response.status_code == 402:
+            print("[fal.ai] クレジット不足 → スキップ")
+            return None
+
+        if response.status_code != 200:
+            print(f"[fal.ai] エラー ({response.status_code}): {response.text[:200]}")
+            return None
+
+        result = response.json()
+        images = result.get("images", [])
+        if not images:
+            print("[fal.ai] 画像データなし")
+            return None
+
+        img_url = images[0].get("url", "")
+        if img_url:
+            img_resp = requests.get(img_url, timeout=60)
+            if img_resp.status_code == 200 and len(img_resp.content) > 1000:
+                print(f"[fal.ai] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
+                return img_resp.content
+
+    except Exception as e:
+        print(f"[fal.ai] エラー: {e}")
+
+    return None
+
+
+def _try_prodia(prompt: str, width: int, height: int) -> bytes | None:
+    """Prodia (SDXL, 無料APIキー) で画像生成する。"""
+    api_key = os.getenv("PRODIA_API_KEY", "")
+    if not api_key:
+        print("[Prodia] PRODIA_API_KEY未設定 → スキップ")
+        return None
+
+    headers = {
+        "X-Prodia-Key": api_key,
+        "Accept": "application/json",
+        "Content-Type": "application/json",
+    }
+    data = {
+        "model": "dreamshaperXL10_alpha2Xl10.safetensors [c8afe2ef]",
+        "prompt": prompt,
+        "negative_prompt": "blurry, low quality, distorted, ugly, nsfw",
+        "steps": 20,
+        "cfg_scale": 7,
+        "width": 1024,
+        "height": 1024,
+        "sampler": "DPM++ 2M Karras",
+    }
+
+    try:
+        print("[Prodia] SDXL ジョブ送信中...")
+        r = requests.post(
+            "https://api.prodia.com/v1/sdxl/generate",
+            json=data,
+            headers=headers,
+            timeout=30,
+        )
+
+        if r.status_code == 401:
+            print("[Prodia] APIキーが無効 → スキップ")
+            return None
+
+        if r.status_code != 200:
+            print(f"[Prodia] 送信エラー ({r.status_code}): {r.text[:200]}")
+            return None
+
+        job_id = r.json().get("job")
+        print(f"[Prodia] ジョブID: {job_id}")
+
+        # 最大3分待機
+        for _ in range(36):
+            time.sleep(5)
+            check = requests.get(
+                f"https://api.prodia.com/v1/job/{job_id}",
+                headers=headers,
+                timeout=15,
+            )
+            if check.status_code != 200:
+                continue
+
+            info = check.json()
+            status = info.get("status")
+
+            if status == "succeeded":
+                img_url = info.get("imageUrl", "")
+                if img_url:
+                    img_resp = requests.get(img_url, timeout=60)
+                    if img_resp.status_code == 200 and len(img_resp.content) > 1000:
+                        print(f"[Prodia] 成功! ({len(img_resp.content) / 1024:.0f} KB)")
+                        return img_resp.content
+                break
+            elif status == "failed":
+                print("[Prodia] ジョブが失敗")
+                break
+        else:
+            print("[Prodia] タイムアウト（3分）")
+
+    except Exception as e:
+        print(f"[Prodia] エラー: {e}")
+
+    return None
+
+
 def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
     """Stable Horde (完全無料・APIキー不要・コミュニティ運営) で画像生成する。"""
-    # 解像度を1024に調整（Stable Horde推奨）
-    hw = 1024 if width >= 1024 else width
-    hh = 1024 if height >= 1024 else height
+    # 匿名キーはキュー優先度が低いため、512x512・10ステップで負荷を減らす
+    hw = 512
+    hh = 512
 
-    # ステップ数を減らして処理を速くする（キュー優先度が上がる）
     submit_url = "https://stablehorde.net/api/v2/generate/async"
     data = {
         "prompt": prompt,
         "params": {
             "width": hw,
             "height": hh,
-            "steps": 20,
+            "steps": 10,
             "sampler_name": "k_euler",
             "cfg_scale": 7,
         },
         "nsfw": False,
-        "models": ["AlbedoBase XL (SDXL)", "SDXL 1.0", "Deliberate", "DreamShaper"],
+        "models": ["Deliberate", "DreamShaper", "Anything Diffusion", "stable_diffusion"],
         "r2": True,
     }
     headers = {"apikey": "0000000000", "Content-Type": "application/json"}
@@ -293,10 +436,10 @@ def _try_stable_horde(prompt: str, width: int, height: int) -> bytes | None:
             wait = info.get("wait_time", 0)
             queue = info.get("queue_position", 0)
 
-            # 最初のチェックで待機時間が300秒超なら即スキップ（キュー過多）
-            if i == 0 and wait > 300:
+            # 最初のチェックで待機時間が600秒超なら即スキップ（キュー過多）
+            if i == 0 and wait > 600:
                 print(f"[StableHorde] キュー過多 (待機{wait}s, キュー{queue}件) → スキップ")
-                break
+                return None
 
             if i % 6 == 0:  # 30秒ごとにログ
                 print(f"[StableHorde] 待機中... (キュー: {queue}, 予想: {wait}s, 経過: {i*5}s)")
@@ -384,17 +527,27 @@ def _run_generation_chain(full_prompt: str, width: int, height: int) -> bytes | 
         print("[AI画像生成] === Pollinations 別エンドポイント ===")
         image_data = _try_picogen(full_prompt, width, height)
 
-    # 3. Hugging Face (FLUX.1-schnell, 高品質)
+    # 3. fal.ai (FLUX.1-schnell, 高速・高品質)
+    if not image_data:
+        print("[AI画像生成] === fal.ai FLUX.1-schnell にフォールバック ===")
+        image_data = _try_fal(full_prompt, width, height)
+
+    # 4. Hugging Face (FLUX.1-schnell)
     if not image_data:
         print("[AI画像生成] === Hugging Face FLUX.1-schnell にフォールバック ===")
         image_data = _try_huggingface(full_prompt, width, height)
 
-    # 4. Together.ai
+    # 5. Together.ai
     if not image_data:
         print("[AI画像生成] === Together.ai にフォールバック ===")
         image_data = _try_together(full_prompt, width, height)
 
-    # 5. Stable Horde（完全無料・キー不要）
+    # 6. Prodia (SDXL, 無料APIキー)
+    if not image_data:
+        print("[AI画像生成] === Prodia SDXL にフォールバック ===")
+        image_data = _try_prodia(full_prompt, width, height)
+
+    # 7. Stable Horde（完全無料・キー不要）
     if not image_data:
         print("[AI画像生成] === Stable Horde にフォールバック（無料・キー不要） ===")
         image_data = _try_stable_horde(full_prompt, width, height)

@@ -49,6 +49,22 @@ HASHTAG_POOLS = {
         "medium": ["#おすすめ", "#メンズファッション", "#コーデ", "#お洒落さんと繋がりたい", "#トレンド", "#韓国ファッション"],
         "small": ["#プチプラコーデ", "#楽天購入品", "#今日のコーデ", "#メンズコーデ", "#ファッション好き", "#着回しコーデ"],
     },
+    "anime": {
+        "large": [
+            "#anime", "#manga", "#otaku", "#animeart", "#weeb",
+            "#animefanart", "#日本アニメ", "#アニメ", "#otakuculture", "#animelife",
+        ],
+        "medium": [
+            "#animeedit", "#animeartwork", "#animecharacter", "#animewallpaper",
+            "#mangaart", "#animelover", "#animecommunity", "#animeworld",
+            "#animestyle", "#japaneseanimation", "#アニメイラスト", "#アニメ好き",
+        ],
+        "small": [
+            "#animefan", "#animeaddicted", "#animeart2024", "#animeartist",
+            "#mangafan", "#animeillustration", "#animecollection", "#dailyanime",
+            "#bestanime", "#topanime", "#アニメファン", "#アニメ好きな人と繋がりたい",
+        ],
+    },
 }
 
 # 常に含めるブランディングタグ
@@ -100,10 +116,17 @@ def generate_hashtags(caption: str, category: str = "", max_tags: int = 20) -> s
 
     pool = HASHTAG_POOLS.get(category, HASHTAG_POOLS["tops"])
 
-    large = random.sample(pool["large"], min(3, len(pool["large"])))
-    medium = random.sample(pool["medium"], min(5, len(pool["medium"])))
-    small = random.sample(pool["small"], min(5, len(pool["small"])))
-    engage = random.sample(ENGAGEMENT_TAGS, min(2, len(ENGAGEMENT_TAGS)))
+    # anime カテゴリは多めに生成
+    if category == "anime":
+        large = random.sample(pool["large"], min(8, len(pool["large"])))
+        medium = random.sample(pool["medium"], min(8, len(pool["medium"])))
+        small = random.sample(pool["small"], min(8, len(pool["small"])))
+        engage = []
+    else:
+        large = random.sample(pool["large"], min(3, len(pool["large"])))
+        medium = random.sample(pool["medium"], min(5, len(pool["medium"])))
+        small = random.sample(pool["small"], min(5, len(pool["small"])))
+        engage = random.sample(ENGAGEMENT_TAGS, min(2, len(ENGAGEMENT_TAGS)))
 
     all_tags = large + medium + small + engage + BRAND_TAGS
 
@@ -124,17 +147,32 @@ def generate_hashtags(caption: str, category: str = "", max_tags: int = 20) -> s
 
 def replace_hashtags(caption: str, category: str = "") -> str:
     """キャプション内の既存ハッシュタグを最適化されたものに置き換える。"""
-    # 既存のハッシュタグ部分を除去
     lines = caption.split("\n")
     clean_lines = []
+    existing_tags = []
+
     for line in lines:
-        # ハッシュタグだけの行を除外
         stripped = line.strip()
         if stripped and all(word.startswith("#") for word in stripped.split() if word):
-            continue
-        clean_lines.append(line)
+            # anime カテゴリはシリーズ専用タグを保持する
+            if category == "anime":
+                existing_tags.extend(stripped.split())
+        else:
+            clean_lines.append(line)
 
     clean_caption = "\n".join(clean_lines).rstrip()
     new_tags = generate_hashtags(caption, category)
+
+    if category == "anime" and existing_tags:
+        # 既存タグ＋汎用タグを合算して重複除去（最大30個）
+        all_tags = existing_tags + new_tags.split()
+        seen = set()
+        unique = []
+        for t in all_tags:
+            if t not in seen:
+                seen.add(t)
+                unique.append(t)
+        combined = " ".join(unique[:30])
+        return f"{clean_caption}\n\n{combined}"
 
     return f"{clean_caption}\n\n{new_tags}"

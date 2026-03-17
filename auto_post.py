@@ -32,6 +32,7 @@ from modules.insta_poster import (
     post_story_to_instagram,
 )
 from modules.hashtags import replace_hashtags
+from modules.anime_scraper import download_anime_images, generate_anime_caption, pick_random_series
 
 # 自動アンフォロー（ローカル専用、GitHub Actionsでは不要）
 try:
@@ -780,6 +781,43 @@ def post_amazon_product():
     return True
 
 
+def post_anime_carousel():
+    """アニメ画像をスクレイピングしてカルーセル投稿する（5枚）。"""
+    base_dir = os.path.dirname(__file__)
+    downloaded_images = []
+
+    try:
+        series_name = pick_random_series()
+        logging.info(f"[アニメ投稿] シリーズ: {series_name}")
+
+        # 画像ダウンロード（5枚）
+        downloaded_images = download_anime_images(series_name, base_dir, count=5)
+        logging.info(f"[アニメ投稿] {len(downloaded_images)}枚ダウンロード完了")
+
+        # 画像アップロード
+        image_urls = []
+        for img_path in downloaded_images:
+            url = upload_image(img_path)
+            image_urls.append(url)
+
+        # キャプション生成
+        caption = generate_anime_caption(series_name)
+        caption = add_cta(caption, category="anime")
+
+        # カルーセル投稿
+        post_id = post_carousel_to_instagram(image_urls, caption)
+        logging.info(f"[アニメ投稿] 完了! Post ID: {post_id}")
+
+        # ストーリーにもシェア
+        auto_story(image_urls[0])
+        return True
+
+    finally:
+        for img_path in downloaded_images:
+            if os.path.exists(img_path):
+                os.remove(img_path)
+
+
 def post_real_product():
     """楽天APIから実商品を取得してカルーセル投稿する。"""
     product = pick_random_product()
@@ -907,9 +945,9 @@ def pick_unused_outfit(posts: list[dict]) -> tuple[int, dict]:
 
 def get_next_mode() -> str:
     """次の投稿モードを取得する（コーデ投稿メイン）。"""
-    # コーデ投稿を中心に、たまに商品・リールを挟む
-    # 6回中4回がコーデ、1回が商品、1回がリール
-    MODE_ROTATION = ["outfit", "outfit", "product", "outfit", "outfit", "reel"]
+    # アニメ投稿を中心に、たまに商品を挟む
+    # 6回中5回がアニメ、1回が商品
+    MODE_ROTATION = ["anime", "anime", "anime", "product", "anime", "anime"]
 
     last_index = -1  # デフォルト: 次回はindex 0 (outfit)
     if os.path.exists(MODE_PATH):
@@ -949,20 +987,17 @@ def auto_post():
         if RAKUTEN_AVAILABLE:
             mode = get_next_mode()
         else:
-            # 楽天API使えなければ ai と reel を交互に
-            if os.path.exists(MODE_PATH):
-                with open(MODE_PATH, "r") as f:
-                    last = json.load(f).get("last_mode", "reel")
-                mode = "reel" if last == "ai" else "ai"
-            else:
-                mode = "ai"
+            # 楽天API使えなければアニメ投稿
+            mode = "anime"
             with open(MODE_PATH, "w") as f:
                 json.dump({"last_mode": mode}, f)
 
         logging.info(f"投稿モード: {mode}")
 
         # Step 2: 投稿実行
-        if mode == "product":
+        if mode == "anime":
+            result = post_anime_carousel()
+        elif mode == "product":
             result = post_real_product()
         elif mode == "reel":
             result = post_ai_reel()

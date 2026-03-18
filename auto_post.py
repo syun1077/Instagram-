@@ -947,7 +947,7 @@ def get_next_mode() -> str:
     """次の投稿モードを取得する（コーデ投稿メイン）。"""
     # アニメ投稿を中心に、たまに商品を挟む
     # 6回中5回がアニメ、1回が商品
-    MODE_ROTATION = ["anime", "anime", "anime", "product", "anime", "anime"]
+    MODE_ROTATION = ["anime", "anime", "anime", "anime", "anime", "anime"]
 
     last_index = -1  # デフォルト: 次回はindex 0 (outfit)
     if os.path.exists(MODE_PATH):

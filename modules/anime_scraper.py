@@ -208,7 +208,7 @@ def _fetch_wallpapers(query: str, page: int = 1) -> list[dict]:
         "q": query,
         "categories": "010",   # anime only
         "purity": "100",       # SFW only
-        "atleast": "1080x1080",
+        "atleast": "1920x1080",
         "sorting": "random",
         "page": page,
     }
@@ -273,7 +273,7 @@ def download_anime_images(series_name: str, output_dir: str, count: int = 5) -> 
             with Image.open(raw_path) as img:
                 if img.mode in ("RGBA", "P"):
                     img = img.convert("RGB")
-                img.save(local_path, "JPEG", quality=90)
+                img.save(local_path, "JPEG", quality=98)
             os.remove(raw_path)
 
             downloaded.append(local_path)

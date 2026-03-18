@@ -790,8 +790,8 @@ def post_anime_carousel():
         series_name = pick_random_series()
         logging.info(f"[アニメ投稿] シリーズ: {series_name}")
 
-        # 画像ダウンロード（5枚）
-        downloaded_images = download_anime_images(series_name, base_dir, count=5)
+        # 画像ダウンロード（4枚）
+        downloaded_images = download_anime_images(series_name, base_dir, count=4)
         logging.info(f"[アニメ投稿] {len(downloaded_images)}枚ダウンロード完了")
 
         # 画像アップロード
